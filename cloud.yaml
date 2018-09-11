@@ -1,0 +1,13 @@
+google_actions:
+  filter:
+    exclude_entities:
+      - switch.basement_floor_lamp
+  entity_config:
+    light.louis_bedside_lamp:
+      room: Master Bedroom
+    light.deb_bedside_lamp:
+      room: Master Bedroom
+    light.floor_lamp_er:
+      room: Entertainment Room
+    light.louis_end_table_lamp_er:
+      room: Entertainment Room

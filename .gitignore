@@ -1,0 +1,16 @@
+secrets.yaml
+.HA_VERSION
+.cloud
+.storage
+.uuid
+OZW_Log.txt
+custom_components
+deps
+home-assistant.log
+*.db
+*.db-*
+*.sqlite
+*.xml
+tts
+ozw-config
+

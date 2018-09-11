@@ -1,0 +1,7 @@
+- platform: template
+  sensors:
+    away:
+      # A sensor determining whether everybody is out of the house.
+      friendly_name: Away
+      value_template: >-
+        {{ is_state('alarm_control_panel.elkm1_area_001', 'armed_away') }}

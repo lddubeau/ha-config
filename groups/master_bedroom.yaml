@@ -1,0 +1,6 @@
+name: Master Bedroom
+#view: yes
+entities:
+  - light.louis_bedside_lamp
+  - light.deb_bedside_lamp
+  - media_player.google_mini_mbr

@@ -1,0 +1,6 @@
+name: Entertainment Room
+#view: yes
+entities:
+  - light.floor_lamp_er
+  - light.louis_end_table_lamp_er
+  - media_player.google_mini_er

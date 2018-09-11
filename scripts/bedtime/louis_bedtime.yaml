@@ -1,0 +1,10 @@
+alias: Louis Bedtime
+sequence:
+  - service: light.turn_on
+    data:
+      entity_id:
+        - light.louis_bedside_lamp
+        - light.deb_bedside_lamp
+  - service: switch.turn_on
+    data:
+      entity_id: switch.elkm1_task_001

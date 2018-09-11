@@ -1,0 +1,7 @@
+alias: Show Time
+sequence:
+  - service: light.turn_on
+    data:
+      entity_id: 
+        - light.floor_lamp_er
+        - light.louis_end_table_lamp_er

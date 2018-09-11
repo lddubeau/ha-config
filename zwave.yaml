@@ -1,0 +1,12 @@
+usb_path: /dev/z-stick
+network_key: !secret zwave_network_key
+config_path: /config/ozw-config
+#device_config:
+#  light.louis_bedside_lamp:
+    # polling_intensity: 1
+    # refresh_value: true 
+    # delay: 3
+    #  light.deb_bedside_lamp:
+    # polling_intensity: 1
+    # refresh_value: true 
+    # delay: 3

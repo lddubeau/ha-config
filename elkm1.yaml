@@ -1,0 +1,29 @@
+host: elks://192.168.0.11:2601
+username: !secret elkm1_username
+password: !secret elkm1_password
+area:
+  include: 
+    - 1
+keypad:
+  include:
+    - 1-3
+user:
+  include:
+    - 1-10
+zone:
+  include:
+    - 1-8
+    - 17-43
+output:
+  enabled: false
+counter:
+  enabled: false
+plc:
+  enabled: false
+setting:
+  enabled: false
+task:
+  include:
+    - 1-5
+thermostat:
+  enabled: false

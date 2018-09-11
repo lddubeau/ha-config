@@ -1,0 +1,5 @@
+name: Rooms
+view: yes
+entities:
+  - group.master_bedroom
+  - group.entertainment_room
