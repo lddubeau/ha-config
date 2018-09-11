@@ -1,0 +1,24 @@
+- platform: template
+  lights:
+    floor_lamp_couch_deb_side_lr:
+      friendly_name: "Floor Lamp Couch Deb Side LR"
+      value_template: "{{ states.switch.floor_lamp_couch_deb_side_lr.state }}"
+      turn_on:
+        service: switch.turn_on
+        entity_id:
+          - switch.floor_lamp_couch_deb_side_lr
+      turn_off:
+        service: switch.turn_off
+        entity_id:
+          - switch.floor_lamp_couch_deb_side_lr
+    table_lamp_couch_deb_side_lr:
+      friendly_name: "Table Lamp Couch Deb Side LR"
+      value_template: "{{ states.switch.table_lamp_couch_deb_side_lr.state }}"
+      turn_on:
+        service: switch.turn_on
+        entity_id:
+          - switch.table_lamp_couch_deb_side_lr
+      turn_off:
+        service: switch.turn_off
+        entity_id:
+          - switch.table_lamp_couch_deb_side_lr
