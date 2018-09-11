@@ -4,7 +4,7 @@
     # point of needing lights turned on inside the house. We cannot just use
     # the sun because cloud cover may warrant using lights.
     dark_outside:
-      friendly_name: "Dark OUtside"
+      friendly_name: "Dark Outside"
       value_template: >-
-        {{ (states.sun.sun.attributes.elevation | float <= -5) or 
+        {{ (states.sun.sun.attributes.elevation | float <= -5) or
            (states.sensor.weather_cloud_coverage.state | int >= 70) }}
