@@ -1,0 +1,21 @@
+- platform: command_line
+  name: occupancy_sleep_time
+  scan_interval: "24:00"
+  command: "shuf -i 1-30 -n 1"
+  value_template: >-
+    {{ (as_timestamp(now().replace(hour=22, minute=15)) + (value | int) * 60) |
+       timestamp_custom("%H:%M") }}
+- platform: command_line
+  name: occupancy_bed_time
+  scan_interval: "24:00"
+  command: "shuf -i 1-30 -n 1"
+  value_template: >-
+    {{ (as_timestamp(now().replace(hour=21, minute=45)) + (value | int) * 60) |
+       timestamp_custom("%H:%M") }}
+- platform: command_line
+  name: occupancy_wake_time
+  scan_interval: "24:00"
+  command: "shuf -i 1-30 -n 1"
+  value_template: >-
+    {{ (as_timestamp(now().replace(hour=5, minute=45)) + (value | int) * 60) |
+       timestamp_custom("%H:%M") }}

@@ -1,0 +1,22 @@
+- platform: template
+  sensors:
+    # Implement the "occupancy cycle" of states used for occupancy simulation.
+    occupancy_cycle:
+      value_template: >-
+        {% if is_state("binary_sensor.away", "on") %}
+          {% if is_state("binary_sensor.dark_outside", "on") %}
+            {% set time = states.sensor.time.state %}
+            {% if time <= states.sensor.occupancy_wake_time.state or
+                  time >= states.sensor.occupancy_sleep_time.state %}
+              sleep
+            {% elif time >= states.sensor.occupancy_bed_time.state %}
+              bed
+            {% else %}
+              up
+            {% endif %}
+          {% else %}
+            light
+          {% endif %}
+        {% else %}
+          home
+        {% endif %}
