@@ -11,3 +11,7 @@ google_actions:
       room: Entertainment Room
     light.louis_end_table_lamp_er:
       room: Entertainment Room
+    light.floor_lamp_couch_deb_side_lr:
+      room: Living Room
+    light.table_lamp_couch_deb_side_lr:
+      room: Living Room
