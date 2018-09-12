@@ -1,0 +1,8 @@
+- entity: light.louis_bedside_lamp
+  name: Louis Lamp
+  tap_action: toggle
+- entity: light.deb_bedside_lamp
+  name: Deb Lamp
+  tap_action: toggle
+- entity: media_player.google_mini_mbr
+  name: Google Mini

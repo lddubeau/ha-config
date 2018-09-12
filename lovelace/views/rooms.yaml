@@ -1,0 +1,27 @@
+title: Rooms
+icon: mdi:grid
+id: rooms
+background: radial-gradient(crimson, skyblue)
+theme: dark-mode
+cards:
+  - type: vertical-stack
+    cards:
+      - type: glance
+        title: Living Room
+        entities: !include ../entities/living_room.yaml
+      - type: entities
+        entities: !include ../entities/living_room.yaml
+  - type: vertical-stack
+    cards:
+      - type: glance
+        title: Master Bedroom
+        entities: !include ../entities/master_bedroom.yaml
+      - type: entities
+        entities: !include ../entities/master_bedroom.yaml
+  - type: vertical-stack
+    cards:
+      - type: glance
+        title: Entertainment Room
+        entities: !include ../entities/entertainment_room.yaml
+      - type: entities
+        entities: !include ../entities/entertainment_room.yaml

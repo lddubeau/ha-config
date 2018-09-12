@@ -1,0 +1,8 @@
+- entity: light.floor_lamp_couch_deb_side_lr
+  name: Floor Lamp
+  tap_action: toggle
+- entity: light.table_lamp_couch_deb_side_lr
+  name: Deb Lamp
+  tap_action: toggle
+- entity: media_player.living_room_home
+  name: Google Home
