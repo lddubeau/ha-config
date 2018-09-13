@@ -7,4 +7,4 @@
       friendly_name: "Dark Outside"
       value_template: >-
         {{ (states.sun.sun.attributes.elevation | float <= -5) or
-           (states.sensor.weather_cloud_coverage.state | int >= 70) }}
+           (states.sensor.luminance_front_window.state | int < 150) }}
