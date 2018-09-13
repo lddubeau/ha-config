@@ -1,0 +1,14 @@
+alias: Turn the interior lights off when we are away
+trigger:
+  platform: state
+  entity_id: binary_sensor.away
+  from: "off"
+  to: "on"
+condition:
+  # Assume that if we left some lights on when dark, we meant to do that.
+  condition: state
+  entity_id: binary_sensor.dark_outside
+  state: "off"
+action:
+  service: light.turn_off
+  entity_id: group.rooms
