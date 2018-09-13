@@ -15,3 +15,5 @@ google_actions:
       room: Living Room
     light.table_lamp_couch_deb_side_lr:
       room: Living Room
+    light.couch_louis_side_lr:
+      room: Living Room
