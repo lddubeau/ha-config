@@ -1,0 +1,28 @@
+title: Automation
+id: automation
+theme: dark-mode
+cards:
+  - type: entities
+    title: Environment
+    entities:
+      - binary_sensor.dark_outside
+  - type: entities
+    title: Presence
+    entities:
+      - binary_sensor.away
+      - binary_sensor.walkway_motion
+  - type: entities
+    title: Occupancy Simulation
+    entities:
+      - sensor.occupancy_wake_time
+      - sensor.occupancy_bed_time
+      - sensor.occupancy_sleep_time
+      - sensor.occupancy_cycle
+  - type: entities
+    title: Scripts
+    entities:
+      - group.all_scripts
+  - type: entities
+    title: Automations
+    entities:
+      - group.all_automations
