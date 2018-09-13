@@ -4,6 +4,16 @@ id: rooms
 background: radial-gradient(crimson, skyblue)
 theme: dark-mode
 cards:
+  - type: glance
+    title: Environment
+    entities:
+      - sensor.time
+      - sensor.date
+      - sun.sun
+      - sensor.weather_symbol
+      - sensor.weather_cloud_coverage
+      - sensor.weather_temperature
+      - sensor.luminance_front_window
   - type: vertical-stack
     cards:
       - type: glance
