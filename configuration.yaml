@@ -52,6 +52,8 @@ tts:
     base_url: http://192.168.0.2:8123
     # base_url: http://shunya.lddubeau.com:3339
 
+wake_on_lan:
+
 cloud: !include cloud.yaml
 elkm1: !include elkm1.yaml
 zwave: !include zwave.yaml
@@ -62,3 +64,4 @@ light: !include_dir_merge_list lights/
 # scene: !include_dir_merge_list scenes/
 sensor: !include_dir_merge_list sensors/
 binary_sensor: !include_dir_merge_list binary_sensors/
+media_player: !include_dir_list media_players/

@@ -1,7 +1,4 @@
 google_actions:
-  filter:
-    exclude_entities:
-      - switch.basement_floor_lamp
   entity_config:
     light.louis_bedside_lamp:
       room: Master Bedroom
@@ -17,3 +14,11 @@ google_actions:
       room: Living Room
     light.couch_louis_side_lr:
       room: Living Room
+    media_player.tv_entertainment_room:
+      room: Entertainment Room
+    media_player.receiver_entertainment_room:
+      room: Entertainment Room
+    media_player.receiver_entertainment_room_zone2:
+      room: Entertainment Room
+    media_player.receiver_entertainment_room_zone3:
+      room: Entertainment Room

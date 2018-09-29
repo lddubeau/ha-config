@@ -6,3 +6,11 @@
   tap_action: toggle
 - entity: media_player.google_mini_er
   name: Google Mini
+- entity: media_player.tv_entertainment_room
+  name: TV
+- entity: media_player.receiver_entertainment_room
+  name: Receiver
+- entity: media_player.receiver_entertainment_room_zone_2
+  name: Receiver Zone 2
+- entity: media_player.receiver_entertainment_room_zone_3
+  name: Receiver Zone 3

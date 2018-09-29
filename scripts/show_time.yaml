@@ -2,6 +2,10 @@ alias: Show Time
 sequence:
   - service: light.turn_on
     data:
-      entity_id: 
+      entity_id:
         - light.floor_lamp_er
         - light.louis_end_table_lamp_er
+  - service: media_player.turn_on
+    data:
+      entity_id:
+        - media_player.tv_entertainment_room

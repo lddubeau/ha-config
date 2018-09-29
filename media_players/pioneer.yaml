@@ -1,0 +1,5 @@
+platform: onkyo
+host: 192.168.10.100
+name: Receiver Entertainment Room
+sources:
+  video2: "Cable"
