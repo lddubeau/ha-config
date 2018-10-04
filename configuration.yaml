@@ -45,6 +45,17 @@ map:
 # Track the sun
 sun:
 
+# Recorder
+recorder:
+  purge_keep_days: 7
+  exclude:
+    entities:
+      - sensor.date
+      - sensor.time
+      - sensor.weather_cloud_coverage
+      - sensor.weather_symbol
+      - sensor.weather_temperature
+
 # Text to speech
 tts:
   - platform: google
