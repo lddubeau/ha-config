@@ -35,3 +35,10 @@ cards:
         entities: !include ../entities/entertainment_room.yaml
       - type: entities
         entities: !include ../entities/entertainment_room.yaml
+  - type: vertical-stack
+    cards:
+      - type: glance
+        title: Outside
+        entities: !include ../entities/outside.yaml
+      - type: entities
+        entities: !include ../entities/outside.yaml

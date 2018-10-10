@@ -22,3 +22,5 @@ google_actions:
       room: Entertainment Room
     media_player.receiver_entertainment_room_zone3:
       room: Entertainment Room
+    light.front_porch:
+      room: Outside
