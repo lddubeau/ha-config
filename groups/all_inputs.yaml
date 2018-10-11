@@ -1,0 +1,4 @@
+name: Inputs
+view: yes
+entities:
+  - group.travel
