@@ -1,0 +1,9 @@
+- platform: template
+  sensors:
+    # This sensor is used to determine whether it is "dark" outside to the
+    # point where outside lights would be useful.
+    dark_outside:
+      friendly_name: "Dark Outside"
+      value_template: >-
+        {{ (states.sun.sun.attributes.elevation | float <= -5) or
+           (states.sensor.luminance_front_window.state | int < 70) }}
