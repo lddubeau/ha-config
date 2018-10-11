@@ -1,0 +1,23 @@
+alias: Manage the outside front lights when away
+trigger:
+  - platform: state
+    entity_id: binary_sensor.away
+    from: "off"
+    to: "on"
+  - platform: state
+    entity_id: binary_sensor.dark_outside
+condition:
+  condition: and
+  conditions:
+    # We don't want this to run when we're on travel because then the lights
+    # would be on all night.
+    - condition: state
+      entity_id: binary_sensor.travel
+      state: "off"
+    - condition: state
+      entity_id: binary_sensor.away
+      state: "on"
+action:
+  service_template: >-
+    light.turn_{% if is_state("binary_sensor.dark_outside", "on") %}on{% else %}off{% endif %}
+  entity_id: group.outside_front_lights

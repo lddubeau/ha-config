@@ -1,0 +1,4 @@
+name: Outside Front Lights
+#view: yes
+entities:
+  - light.front_porch

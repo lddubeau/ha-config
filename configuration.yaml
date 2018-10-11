@@ -52,6 +52,7 @@ recorder:
     entities:
       - sensor.date
       - sensor.time
+      - sensor.date__time
       - sensor.weather_cloud_coverage
       - sensor.weather_symbol
       - sensor.weather_temperature
@@ -76,3 +77,4 @@ light: !include_dir_merge_list lights/
 sensor: !include_dir_merge_list sensors/
 binary_sensor: !include_dir_merge_list binary_sensors/
 media_player: !include_dir_list media_players/
+input_datetime: !include_dir_named input_datetimes/
