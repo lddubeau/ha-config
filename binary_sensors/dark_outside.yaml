@@ -1,9 +1,12 @@
 - platform: template
   sensors:
     # This sensor is used to determine whether it is "dark" outside to the
-    # point where outside lights would be useful.
+    # point where outside lights would be useful. The first version of this
+    # sensor used the lux reading in the front window but that is too crude a
+    # reading to be useful. We'd have to set the light detector to provide
+    # finer grained reports, but there is probably not much to be gained
+    # from it.
     dark_outside:
       friendly_name: "Dark Outside"
       value_template: >-
-        {{ (states.sun.sun.attributes.elevation | float <= -5) or
-           (states.sensor.luminance_front_window.state | int < 70) }}
+        {{ states.sun.sun.attributes.elevation | float <= -5 }}
