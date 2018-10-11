@@ -4,7 +4,7 @@
     occupancy_cycle:
       value_template: >-
         {% if is_state("binary_sensor.away", "on") %}
-          {% if is_state("binary_sensor.dark_outside", "on") %}
+          {% if is_state("binary_sensor.dark_inside", "on") %}
             {% set time = states.sensor.time.state %}
             {% if time <= states.sensor.occupancy_wake_time.state or
                   time >= states.sensor.occupancy_sleep_time.state %}

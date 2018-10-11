@@ -7,7 +7,7 @@ trigger:
 condition:
   # Assume that if we left some lights on when dark, we meant to do that.
   condition: state
-  entity_id: binary_sensor.dark_outside
+  entity_id: binary_sensor.dark_inside
   state: "off"
 action:
   service: light.turn_off
