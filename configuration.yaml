@@ -60,9 +60,8 @@ recorder:
 # Text to speech
 tts:
   - platform: google
-    # This is a new configuration parameter added to a custom version of HA.
-    base_url: http://192.168.0.2:8123
-    # base_url: http://shunya.lddubeau.com:3339
+    base_url: http://192.168.0.12:8123
+
 
 wake_on_lan:
 
