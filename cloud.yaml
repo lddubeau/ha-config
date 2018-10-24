@@ -24,3 +24,9 @@ google_actions:
       room: Entertainment Room
     light.front_porch:
       room: Outside
+    light.craft_room_lights_entrance:
+      room: Craft Room
+    light.craft_room_lights_back:
+      room: Craft Room
+    light.machine_room_lights:
+      room: Machine Room

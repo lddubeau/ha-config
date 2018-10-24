@@ -1,0 +1,4 @@
+name: Machine Room
+#view: yes
+entities:
+  - light.machine_room_lights

@@ -38,6 +38,20 @@ cards:
   - type: vertical-stack
     cards:
       - type: glance
+        title: Craft Room
+        entities: !include ../entities/craft_room.yaml
+      - type: entities
+        entities: !include ../entities/craft_room.yaml
+  - type: vertical-stack
+    cards:
+      - type: glance
+        title: Machine Room
+        entities: !include ../entities/machine_room.yaml
+      - type: entities
+        entities: !include ../entities/machine_room.yaml
+  - type: vertical-stack
+    cards:
+      - type: glance
         title: Outside
         entities: !include ../entities/outside.yaml
       - type: entities

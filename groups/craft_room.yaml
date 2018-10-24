@@ -1,0 +1,6 @@
+name: Craft Room
+#view: yes
+entities:
+  - light.craft_room_lights_entrance
+  - light.craft_room_lights_back
+  - media_player.craft_room_speaker
