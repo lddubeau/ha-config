@@ -2,3 +2,4 @@ name: Outside Front Lights
 #view: yes
 entities:
   - light.front_porch
+  - light.outside_garage_lights
