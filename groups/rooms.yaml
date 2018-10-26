@@ -2,6 +2,7 @@ name: Rooms
 view: yes
 entities:
   - group.master_bedroom
+  - group.master_bathroom
   - group.living_room
   - group.entertainment_room
   - group.craft_room

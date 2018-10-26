@@ -31,6 +31,13 @@ cards:
   - type: vertical-stack
     cards:
       - type: glance
+        title: Master Bathroom
+        entities: !include ../entities/master_bathroom.yaml
+      - type: entities
+        entities: !include ../entities/master_bathroom.yaml
+  - type: vertical-stack
+    cards:
+      - type: glance
         title: Entertainment Room
         entities: !include ../entities/entertainment_room.yaml
       - type: entities

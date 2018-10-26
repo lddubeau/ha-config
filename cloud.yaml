@@ -32,3 +32,7 @@ google_actions:
       room: Craft Room
     light.machine_room_lights:
       room: Machine Room
+    light.master_bathroom_vanity:
+      room: Master Bathroom
+    light.master_bathroom_shower:
+      room: Master Bathroom
