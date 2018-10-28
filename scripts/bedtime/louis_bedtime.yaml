@@ -5,6 +5,6 @@ sequence:
       entity_id:
         - light.louis_bedside_lamp
         - light.deb_bedside_lamp
-  - service: switch.turn_on
+  - service: scene.turn_on
     data:
-      entity_id: switch.elkm1_task_001
+      entity_id: scene.task001
