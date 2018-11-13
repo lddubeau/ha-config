@@ -18,48 +18,48 @@ cards:
     cards:
       - type: glance
         title: Living Room
-        entities: !include ../entities/living_room.yaml
+        entities: !include lovelace/entities/living_room.yaml
       - type: entities
-        entities: !include ../entities/living_room.yaml
+        entities: !include lovelace/entities/living_room.yaml
   - type: vertical-stack
     cards:
       - type: glance
         title: Master Bedroom
-        entities: !include ../entities/master_bedroom.yaml
+        entities: !include lovelace/entities/master_bedroom.yaml
       - type: entities
-        entities: !include ../entities/master_bedroom.yaml
+        entities: !include lovelace/entities/master_bedroom.yaml
   - type: vertical-stack
     cards:
       - type: glance
         title: Master Bathroom
-        entities: !include ../entities/master_bathroom.yaml
+        entities: !include lovelace/entities/master_bathroom.yaml
       - type: entities
-        entities: !include ../entities/master_bathroom.yaml
+        entities: !include lovelace/entities/master_bathroom.yaml
   - type: vertical-stack
     cards:
       - type: glance
         title: Entertainment Room
-        entities: !include ../entities/entertainment_room.yaml
+        entities: !include lovelace/entities/entertainment_room.yaml
       - type: entities
-        entities: !include ../entities/entertainment_room.yaml
+        entities: !include lovelace/entities/entertainment_room.yaml
   - type: vertical-stack
     cards:
       - type: glance
         title: Craft Room
-        entities: !include ../entities/craft_room.yaml
+        entities: !include lovelace/entities/craft_room.yaml
       - type: entities
-        entities: !include ../entities/craft_room.yaml
+        entities: !include lovelace/entities/craft_room.yaml
   - type: vertical-stack
     cards:
       - type: glance
         title: Machine Room
-        entities: !include ../entities/machine_room.yaml
+        entities: !include lovelace/entities/machine_room.yaml
       - type: entities
-        entities: !include ../entities/machine_room.yaml
+        entities: !include lovelace/entities/machine_room.yaml
   - type: vertical-stack
     cards:
       - type: glance
         title: Outside
-        entities: !include ../entities/outside.yaml
+        entities: !include lovelace/entities/outside.yaml
       - type: entities
-        entities: !include ../entities/outside.yaml
+        entities: !include lovelace/entities/outside.yaml
