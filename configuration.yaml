@@ -77,3 +77,14 @@ sensor: !include_dir_merge_list sensors/
 binary_sensor: !include_dir_merge_list binary_sensors/
 media_player: !include_dir_list media_players/
 input_datetime: !include_dir_named input_datetimes/
+
+telegram_bot:
+  - platform: polling
+    api_key: !secret telegram_api_key
+    allowed_chat_ids:
+      - !secret telegram_id_louis
+
+notify:
+  - name: telegram_louis
+    platform: telegram
+    chat_id: !secret telegram_id_louis
