@@ -7,7 +7,9 @@
 - entity: light.couch_louis_side_lr
   name: Louis Lamp
   tap_action: toggle
+- entity: media_player.living_room_tv
+  name:  Living Room TV
+- entity: media_player.living_room_chromecast
+  name: Living Room Chromecast
 - entity: media_player.living_room_home
   name: Google Home
-- entity: media_player.living_room_chromecast
-  name: Living Room TV Chromecast

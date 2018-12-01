@@ -8,4 +8,4 @@ sequence:
   - service: media_player.turn_on
     data:
       entity_id:
-        - media_player.tv_entertainment_room
+        - media_player.basement_tv
