@@ -5,3 +5,4 @@ entities:
   - light.table_lamp_couch_deb_side_lr
   - light.couch_louis_side_lr
   - media_player.living_room_home
+  - media_player.living_room_chromecast
