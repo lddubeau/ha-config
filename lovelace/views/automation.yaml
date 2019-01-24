@@ -1,6 +1,7 @@
 title: Automation
 path: automation
-theme: dark-mode
+background: black
+theme: slate
 cards:
   - type: entities
     title: Environment

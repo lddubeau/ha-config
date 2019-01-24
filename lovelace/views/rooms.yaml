@@ -1,8 +1,8 @@
 title: Rooms
 icon: mdi:grid
 path: rooms
-background: radial-gradient(crimson, skyblue)
-theme: dark-mode
+background: black
+theme: slate
 cards:
   - type: glance
     title: Environment
