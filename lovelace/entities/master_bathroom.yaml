@@ -1,6 +1,8 @@
 - entity: light.master_bathroom_vanity
   name: Vanity
-  tap_action: toggle
+  tap_action:
+    action: toggle
 - entity: light.master_bathroom_shower
   name: Shower
-  tap_action: toggle
+  tap_action:
+    action: toggle

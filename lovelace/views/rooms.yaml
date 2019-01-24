@@ -1,6 +1,6 @@
 title: Rooms
 icon: mdi:grid
-id: rooms
+path: rooms
 background: radial-gradient(crimson, skyblue)
 theme: dark-mode
 cards:

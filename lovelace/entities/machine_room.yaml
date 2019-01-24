@@ -1,3 +1,4 @@
 - entity: light.machine_room_lights
   name: Lights
-  tap_action: toggle
+  tap_action:
+    action: toggle

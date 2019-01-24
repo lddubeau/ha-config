@@ -1,9 +1,11 @@
 - entity: light.floor_lamp_er
   name: Floor Lamp
-  tap_action: toggle
+  tap_action:
+    action: toggle
 - entity: light.louis_end_table_lamp_er
   name: Louis End Table
-  tap_action: toggle
+  tap_action:
+    action: toggle
 - entity: media_player.google_mini_er
   name: Google Mini
 - entity: media_player.basement_tv
