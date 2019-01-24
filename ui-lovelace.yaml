@@ -2,3 +2,4 @@ title: Home
 views:
   - !include lovelace/views/rooms.yaml
   - !include lovelace/views/automation.yaml
+  - !include lovelace/views/living_room.yaml

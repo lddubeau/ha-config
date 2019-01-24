@@ -1,0 +1,23 @@
+title: Living Room
+path: living_room
+background: black
+theme: slate
+cards:
+ - type: light
+   entity: light.floor_lamp_couch_deb_side_lr
+   name: Floor Lamp
+ - type: light
+   entity: light.table_lamp_couch_deb_side_lr
+   name: Deb Lamp
+ - type: light
+   entity: light.couch_louis_side_lr
+   name: Louis Lamp
+ - type: media-control
+   entity: media_player.living_room_tv
+   name:  Living Room TV
+ - type: media-control
+   entity: media_player.living_room_chromecast
+   name: Living Room Chromecast
+ - type: media-control
+   entity: media_player.living_room_home
+   name: Google Home
