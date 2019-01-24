@@ -52,7 +52,7 @@ recorder:
     entities:
       - sensor.date
       - sensor.time
-      - sensor.date__time
+      - sensor.date_time
       - sensor.weather_cloud_coverage
       - sensor.weather_symbol
       - sensor.weather_temperature

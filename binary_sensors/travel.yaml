@@ -3,7 +3,7 @@
     travel:
       friendly_name: "Traveling"
       value_template: >-
-        {% set time = as_timestamp(strptime(states("sensor.date__time"),
+        {% set time = as_timestamp(strptime(states("sensor.date_time"),
                                             "%Y-%m-%d, %H:%M")) %}
         {{ (state_attr("input_datetime.travel_start", "timestamp") | int <= time) and
            (state_attr("input_datetime.travel_end", "timestamp") | int > time) }}
