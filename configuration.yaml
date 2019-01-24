@@ -88,3 +88,6 @@ notify:
   - name: telegram_louis
     platform: telegram
     chat_id: !secret telegram_id_louis
+
+lovelace:
+  mode: yaml
