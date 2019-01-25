@@ -13,7 +13,8 @@ zone:
     - 1-8
     - 17-43
 output:
-  enabled: false
+  include:
+    - 207
 counter:
   enabled: false
 plc:
