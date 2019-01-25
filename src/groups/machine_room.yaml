@@ -1,4 +1,9 @@
 name: Machine Room
-#view: yes
+type: room
+icon: mdi:air-conditioner
+order: 7
 entities:
-  - light.machine_room_lights
+  - entity: light.machine_room_lights
+    name: Lights
+    tap_action:
+      action: toggle

@@ -1,5 +1,12 @@
 name: Outside Front Lights
-#view: yes
+type: room
+order: 8
 entities:
-  - light.front_porch
-  - light.outside_garage_lights
+  - entity: light.front_porch
+    name: Front Porch
+    tap_action:
+      action: toggle
+  - entity: light.outside_garage_lights
+    name: Garage Lights
+    tap_action:
+      action: toggle

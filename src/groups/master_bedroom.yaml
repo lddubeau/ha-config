@@ -1,6 +1,15 @@
 name: Master Bedroom
-#view: yes
+type: room
+icon: mdi:hotel
+order: 2
 entities:
-  - light.louis_bedside_lamp
-  - light.deb_bedside_lamp
-  - media_player.google_mini_mbr
+  - entity: light.louis_bedside_lamp
+    name: Louis Lamp
+    tap_action:
+      action: toggle
+  - entity: light.deb_bedside_lamp
+    name: Deb Lamp
+    tap_action:
+      action: toggle
+  - entity: media_player.google_mini_mbr
+    name: Google Mini

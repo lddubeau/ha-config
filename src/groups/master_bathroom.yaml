@@ -1,5 +1,13 @@
 name: Master Bathroom
-#view: yes
+type: room
+icon: mdi:shower
+order: 3
 entities:
-  - light.master_bathroom_vanity
-  - light.master_bathroom_shower
+  - entity: light.master_bathroom_vanity
+    name: Vanity
+    tap_action:
+      action: toggle
+  - entity: light.master_bathroom_shower
+    name: Shower
+    tap_action:
+      action: toggle

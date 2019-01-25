@@ -1,0 +1,18 @@
+title: Rooms
+icon: mdi:floor-plan
+path: rooms
+background: black
+theme: slate
+cards:
+  !flatten
+    - type: glance
+      title: Environment
+      entities:
+        - sensor.time
+        - sensor.date
+        - sun.sun
+        - sensor.weather_symbol
+        - sensor.weather_cloud_coverage
+        - sensor.weather_temperature
+        - sensor.luminance_front_window
+    - !rooms

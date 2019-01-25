@@ -1,8 +1,0 @@
-- entity: light.craft_room_lights_entrance
-  name: Entrance Lights
-  tap_action:
-    action: toggle
-- entity: light.craft_room_lights_back
-  name: Back Lights
-  tap_action:
-    action: toggle
