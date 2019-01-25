@@ -1,0 +1,15 @@
+alias: Alarm Failure
+trigger:
+  - platform: state
+    entity_id: switch.elk_arming_failed_output_207
+    from: "off"
+    to: "on"
+action:
+  service: tts.google_say
+  data:
+    message: "The alarm failed to arm due to unsecured zones."
+    entity_id:
+      - media_player.living_room_home
+      - media_player.kitchen_speaker
+      - media_player.google_mini_mbr
+      - media_player.google_mini_er
