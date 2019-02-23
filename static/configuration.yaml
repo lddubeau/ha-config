@@ -92,3 +92,5 @@ notify:
 
 lovelace:
   mode: yaml
+
+system_health:
