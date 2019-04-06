@@ -3,18 +3,13 @@ username: !secret elkm1_username
 password: !secret elkm1_password
 temperature_unit: F
 area:
-  include:
-    - 1
+  include: [1]
 keypad:
-  include:
-    - 1-3
+  include: [1-3]
 zone:
-  include:
-    - 1-8
-    - 17-43
+  include: [1-8, 17-43]
 output:
-  include:
-    - 207
+  include: [207]
 counter:
   enabled: false
 plc:
@@ -22,7 +17,6 @@ plc:
 setting:
   enabled: false
 task:
-  include:
-    - 1-5
+  include: [1-5]
 thermostat:
   enabled: false
