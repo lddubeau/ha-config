@@ -1,0 +1,12 @@
+* We have logic that attempts to keep on the lights that are on at the time we
+  go into "away" mode. Unfortunately, the occupancy simulation code completely
+  ignores the lights that we spared in lights_off_when_away.yaml.
+
+  Ideas:
+    - When going away, scan all lights, record a list of those that were off.
+      Make a group/store in a variable these lights.
+
+    - The occupancy code must then affect lights only in that group/variable.
+
+  The problem with that idea is that it is very ad hoc. If the light needs to be
+  locked for other reasons, it will need another infrastructure to lock it.
