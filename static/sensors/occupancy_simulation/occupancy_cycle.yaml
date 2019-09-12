@@ -1,6 +1,18 @@
 - platform: template
   sensors:
     # Implement the "occupancy cycle" of states used for occupancy simulation.
+    # The following states are defined:
+    #
+    # - home: the occupants are home
+    #
+    # - light: the occupants are away but there is daylight inside the house
+    #
+    # - sleep: the occupants are away and we are simulating everyone asleep
+    #
+    # - bed: the occupants are in bed prior to sleep
+    #
+    # - up: the occupants are up
+    #
     occupancy_cycle:
       value_template: >-
         {% if is_state("binary_sensor.away", "on") %}
