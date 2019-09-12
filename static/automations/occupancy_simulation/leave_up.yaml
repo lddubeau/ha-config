@@ -3,6 +3,11 @@ trigger:
   - platform: state
     entity_id: sensor.occupancy_cycle
     from: "up"
+# Don't turn off the light if we'd be turning it off because someone is coming
+# home.
+condition:
+  condition: template
+  value_template: "{{ not is_state ('sensor.occupancy_cycle, 'home') }}"
 action:
   - service: light.turn_off
     entity_id: group.living_room
