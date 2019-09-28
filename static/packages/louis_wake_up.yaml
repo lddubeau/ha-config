@@ -1,0 +1,62 @@
+input_boolean:
+  louis_wake_alarm_dismissed:
+    # This boolean input is meant to be triggered from Automate/Tasker etc, when
+    # Louis has dismissed his wake up alarm.
+    name: "Louis' Waking Alarm Was Dismissed"
+    initial: off
+  louis_woke_up_today:
+    # This boolean input is meant to be true when Louis has woken up for the day.
+    # False until that happened.
+    name: "Louis Woke Up Today"
+    initial: off
+
+script:
+  # This is a script that can be used to forcibly tell HA that louis woke up.
+  louis_woke_up_today:
+    alias: Louis Woke Up Today
+    sequence:
+      service: input_booleans.turn_on
+      entity_id: input_booleans.louis_woke_up_today
+
+automation:
+  # Detect that Louis woke up today.
+  - alias: "Louis' Waking Alarm Was Dismissed"
+    trigger:
+      platform: state
+      entity_id: input_boolean.louis_wake_alarm_dismissed
+      to: "on"
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.louis_woke_up_today
+      # We must reset our alarm.
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.louis_wake_alarm_dismissed
+  # Detect that Louis woke up and generate the corresponding event.
+  - alias: "Louis woke up"
+    trigger:
+      platform: state
+      entity_id: input_boolean.louis_woke_up_today
+      to: "on"
+    action:
+      - event: louis_woke_up
+  # Turn the lights on when the event has been generated.
+  - alias: "Turn on lights when Louis wakes up"
+    trigger:
+      platform: event
+      event_type: louis_woke_up
+    condition:
+      # Turn the lights on only if it is dark inside.
+      condition: state
+      entity_id: binary_sensor.dark_inside
+      state: "on"
+    action:
+      service: light.turn_on
+      entity_id: group.living_room
+  # Reset louis_woke_up_today at midnight.
+  - alias: "Reset input_boolean.louis_woke_up_today at midnight"
+    trigger:
+      platform: time
+      at: "00:00:00"
+    action:
+      service: input_boolean.turn_off
+      entity_id: input_boolean.louis_woke_up_today
