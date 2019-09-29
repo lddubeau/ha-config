@@ -20,4 +20,4 @@ condition:
 action:
   service_template: >-
     light.turn_{% if is_state("binary_sensor.dark_outside", "on") %}on{% else %}off{% endif %}
-  entity_id: group.outside_front_lights
+  entity_id: group.front_lights
