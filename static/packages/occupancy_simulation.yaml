@@ -1,0 +1,108 @@
+sensor:
+  - platform: command_line
+    name: occupancy_sleep_time
+    scan_interval: "24:00"
+    command: "shuf -i 1-30 -n 1"
+    value_template: >-
+      {{ (as_timestamp(now().replace(hour=22, minute=15)) + (value | int) * 60) |
+         timestamp_custom("%H:%M") }}
+  - platform: command_line
+    name: occupancy_bed_time
+    scan_interval: "24:00"
+    command: "shuf -i 1-30 -n 1"
+    value_template: >-
+      {{ (as_timestamp(now().replace(hour=21, minute=45)) + (value | int) * 60) |
+         timestamp_custom("%H:%M") }}
+  - platform: command_line
+    name: occupancy_wake_time
+    scan_interval: "24:00"
+    command: "shuf -i 1-30 -n 1"
+    value_template: >-
+      {{ (as_timestamp(now().replace(hour=5, minute=45)) + (value | int) * 60) |
+         timestamp_custom("%H:%M") }}
+  - platform: template
+    sensors:
+      # Implement the "occupancy cycle" of states used for occupancy simulation.
+      # The following states are defined:
+      #
+      # - home: the occupants are home
+      #
+      # - light: the occupants are away but there is daylight inside the house
+      #
+      # - sleep: the occupants are away and we are simulating everyone asleep
+      #
+      # - bed: the occupants are in bed prior to sleep
+      #
+      # - up: the occupants are up
+      #
+      occupancy_cycle:
+        value_template: >-
+          {% if is_state("binary_sensor.away", "on") %}
+            {% if is_state("binary_sensor.dark_inside", "on") %}
+              {% set time = states.sensor.time.state %}
+              {% if time <= states.sensor.occupancy_wake_time.state or
+                    time >= states.sensor.occupancy_sleep_time.state %}
+                sleep
+              {% elif time >= states.sensor.occupancy_bed_time.state %}
+                bed
+              {% else %}
+                up
+              {% endif %}
+            {% else %}
+              light
+            {% endif %}
+          {% else %}
+            home
+          {% endif %}
+
+automation:
+  - alias: Enter the Up State
+    trigger:
+      - platform: state
+        entity_id: sensor.occupancy_cycle
+        to: "up"
+    action:
+      - service: light.turn_on
+        entity_id: group.living_room
+  - alias: Leave the Bed State
+    trigger:
+      - platform: state
+        entity_id: sensor.occupancy_cycle
+        from: "bed"
+    action:
+      - service: light.turn_off
+        entity_id: group.master_bedroom
+  # When we enter the light state, all lights must be turned off.
+  # This automation may be redundant for some scenarios. Eg. leaving the "up"
+  # state turns off the lights in the living room already. However, this
+  # automation takes care of some additional cases. For instance if lights are
+  # on when we leave the house, and there is light outside this turns them off.
+  - alias: Enter the Light State
+    trigger:
+      - platform: state
+        entity_id: sensor.occupancy_cycle
+        to: "light"
+    action:
+      - service: light.turn_off
+        entity_id: group.rooms
+  - alias: Enter the Bed State
+    trigger:
+      - platform: state
+        entity_id: sensor.occupancy_cycle
+        to: "bed"
+    action:
+      - service: light.turn_on
+        entity_id: group.master_bedroom
+  - alias: Leave the Up State
+    trigger:
+      - platform: state
+        entity_id: sensor.occupancy_cycle
+        from: "up"
+    # Don't turn off the light if we'd be turning it off because someone is
+    # coming home.
+    condition:
+      condition: template
+      value_template: "{{ not is_state ('sensor.occupancy_cycle', 'home') }}"
+    action:
+      - service: light.turn_off
+        entity_id: group.living_room

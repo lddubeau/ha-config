@@ -1,8 +1,0 @@
-alias: Enter the Up State
-trigger:
-  - platform: state
-    entity_id: sensor.occupancy_cycle
-    to: "up"
-action:
-  - service: light.turn_on
-    entity_id: group.living_room
