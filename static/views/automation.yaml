@@ -6,12 +6,26 @@ cards:
   - type: entities
     title: Environment
     entities:
+      - sensor.time
+      - sensor.date
       - binary_sensor.dark_inside
+      - binary_sensor.dark_outside
   - type: entities
     title: Presence
     entities:
       - binary_sensor.away
       - binary_sensor.walkway_motion
+  - type: entities
+    title: Travel
+    entities:
+      - binary_sensor.travel
+      - input_datetime.travel_start
+      - input_datetime.travel_end
+  - type: entities
+    title: Routines
+    entities:
+      - input_boolean.louis_woke_up_today
+      - input_boolean.louis_wake_alarm_dismissed
   - type: entities
     title: Occupancy Simulation
     entities:
