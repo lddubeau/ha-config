@@ -46,9 +46,13 @@ automation:
       event_type: louis_woke_up
     condition:
       # Turn the lights on only if it is dark inside.
-      condition: state
-      entity_id: binary_sensor.dark_inside
-      state: "on"
+      - condition: state
+        entity_id: binary_sensor.dark_inside
+        state: "on"
+      # And only if Louis is not away
+      - condition: state
+        entity_id: binary_sensor.louis_away
+        state: "off"
     action:
       service: light.turn_on
       entity_id: group.living_room
