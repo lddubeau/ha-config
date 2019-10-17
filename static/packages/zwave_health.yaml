@@ -1,0 +1,40 @@
+sensor:
+  - platform: template
+    sensors:
+      unhealthy_zwave_nodes:
+        value_template: >-
+          {{ states.zwave | selectattr('state', 'ne', 'ready') | map(attribute='entity_id') | join(",") }}
+
+# A template sensor that iterates over a group won't get updated on changes in
+# the members of the group. It's a known defect^H^H^H^H^H^Hfeature of Home
+# Assistant. So we work around the issue by having an automation trigger
+# updates periodically.
+automation:
+  - alias: Update Unhealthy ZWave Nodes
+    trigger:
+      - platform: time_pattern
+        seconds: '/10'
+    action:
+      - service: homeassistant.update_entity
+        entity_id: sensor.unhealthy_zwave_nodes
+  - alias: Test Unhealthy ZWave Nodes
+    trigger:
+      platform: template
+      # This triggers if unhealthy_zwave_nodes has not changed for 5 minutes.
+      # and the last time this automation triggered was earlier than the last
+      # time the list of unhealthy_zwave_nodes changed.
+      #
+      # last_triggered may be None if the automation was never triggered....
+      value_template: >-
+        {% set last_changed = states.sensor.unhealthy_zwave_nodes.last_changed %}
+        {% set last_triggered =
+           states.automation.test_unhealthy_zwave_nodes.attributes.last_triggered %}
+        {% set time_now = states.sensor.time.last_changed %}
+        {{ ((last_triggered is none) or
+            ((time_now - last_triggered).total_seconds() > 300)) and
+           ((time_now - last_changed).total_seconds() > 300) }}
+    action:
+      service: python_script.test_zwave_nodes
+      data_template:
+        entity_id: >-
+          {{ states.sensor.unhealthy_zwave_nodes.state or "" }}

@@ -95,3 +95,5 @@ lovelace:
   mode: yaml
 
 system_health:
+
+python_script:
