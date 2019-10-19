@@ -3,31 +3,8 @@ input_boolean:
     # This boolean input is meant to be triggered from Automate/Tasker etc, when
     # Louis has dismissed his wake up alarm.
     name: "Louis' Waking Alarm Was Dismissed"
-    initial: off
-  louis_woke_up_today:
-    # This boolean input is meant to be true when Louis has woken up for the day.
-    # False until that happened.
-    name: "Louis Woke Up Today"
-    initial: off
-  louis_went_to_sleep_today:
-    # This boolean input is meant to be true when Louis has gone to sleep for the day.
-    # False until that happened.
-    name: "Louis Went to Sleep Today"
-    initial: off
-
-script:
-  # This is a script that can be used to forcibly tell HA that louis woke up.
-  louis_woke_up_today:
-    alias: Louis Woke Up Today
-    sequence:
-      service: input_booleans.turn_on
-      entity_id: input_booleans.louis_woke_up_today
-  # This is a script that can be used to forcibly tell HA that louis sent to sleep.
-  louis_went_to_sleep_today:
-    alias: Louis Went To Sleep Today
-    sequence:
-      service: input_booleans.turn_on
-      entity_id: input_booleans.louis_went_to_sleep_today
+  louis_is_awake:
+    name: "Louis is Awake"
 
 automation:
   # Detect that Louis woke up today.
@@ -38,7 +15,7 @@ automation:
       to: "on"
     action:
       - service: input_boolean.turn_on
-        entity_id: input_boolean.louis_woke_up_today
+        entity_id: input_boolean.louis_is_awake
       # We must reset our alarm.
       - service: input_boolean.turn_off
         entity_id: input_boolean.louis_wake_alarm_dismissed
@@ -46,7 +23,7 @@ automation:
   - alias: "Louis woke up"
     trigger:
       platform: state
-      entity_id: input_boolean.louis_woke_up_today
+      entity_id: input_boolean.louis_is_awake
       to: "on"
     action:
       - event: louis_woke_up
@@ -54,8 +31,8 @@ automation:
   - alias: "Louis Went to Sleep"
     trigger:
       platform: state
-      entity_id: input_boolean.louis_went_to_sleep_today
-      to: "on"
+      entity_id: input_boolean.louis_is_awake
+      to: "off"
     action:
       - event: louis_went_to_sleep
   # Turn the lights on when the event has been generated.
@@ -88,12 +65,3 @@ automation:
     action:
       service: light.turn_off
       entity_id: light.louis_bedside_lamp
-  - alias: "Reset louis wake state at midnight"
-    trigger:
-      platform: time
-      at: "00:00:00"
-    action:
-      service: input_boolean.turn_off
-      entity_id:
-        - input_boolean.louis_woke_up_today
-        - input_boolean.louis_went_to_sleep_today

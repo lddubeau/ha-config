@@ -24,8 +24,7 @@ cards:
   - type: entities
     title: Routines
     entities:
-      - input_boolean.louis_woke_up_today
-      - input_boolean.louis_wake_alarm_dismissed
+      - input_boolean.louis_is_awake
   - type: entities
     title: Occupancy Simulation
     entities:
