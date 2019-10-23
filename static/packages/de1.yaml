@@ -1,0 +1,13 @@
+notify:
+  - name: de1_automate
+    platform: llamalab_automate
+    api_key: !secret de1_automate_api_key
+    to: !secret de1_automate_email
+
+script:
+  de1_wake:
+    alias: Wake the DE1
+    sequence:
+      - service: notify.de1_automate
+        data:
+          message: Wake DE1
