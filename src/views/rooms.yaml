@@ -8,6 +8,7 @@ cards:
     - type: glance
       title: Environment
       entities:
+        - alarm_control_panel.area001
         - sensor.time
         - sensor.date
         - sun.sun

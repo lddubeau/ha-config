@@ -6,6 +6,7 @@ cards:
   - type: entities
     title: Environment
     entities:
+      - alarm_control_panel.area001
       - sensor.time
       - sensor.date
       - binary_sensor.dark_inside
