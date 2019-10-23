@@ -6,3 +6,4 @@ entity_id = data.get('entity_id')
 if entity_id is not None:
     for entity in entity_id.split(","):
         hass.services.call('zwave', 'test_node', {'node_id': entity}, False)
+        time.sleep(1)
