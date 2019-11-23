@@ -1,0 +1,9 @@
+alias: Log ZWave Events
+trigger:
+  platform: event
+  event_type: zwave.node_event
+action:
+ service: system_log.write
+ data_template:
+   message: "Got event {{ trigger.event }}"
+   level: info
