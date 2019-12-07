@@ -3,5 +3,9 @@ type: room
 icon: mdi:desk-lamp
 order: 4
 entities:
+  - entity: light.office_light
+    name: Lights
+    tap_action:
+      action: toggle
   - entity: media_player.office_speaker
     name: Office Speaker

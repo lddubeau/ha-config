@@ -6,4 +6,5 @@ entities:
   - group.entertainment_room
   - group.craft_room
   - group.machine_room
+  - group.office
   - group.outside
