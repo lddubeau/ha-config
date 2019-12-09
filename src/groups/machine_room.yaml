@@ -1,7 +1,7 @@
 name: Machine Room
 type: room
 icon: mdi:air-conditioner
-order: 7
+order: 8
 entities:
   - entity: light.machine_room_lights
     name: Lights

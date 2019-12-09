@@ -1,6 +1,6 @@
 name: Front Lights
 type: room
-order: 8
+order: 9
 entities:
   - entity: light.front_porch
     name: Front Porch

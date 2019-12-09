@@ -1,0 +1,9 @@
+name: Dining Room
+type: room
+order: 2
+icon: mdi:table-chair
+entities:
+  - entity: light.dining_room_light
+    name: Light
+    tap_action:
+      action: toggle

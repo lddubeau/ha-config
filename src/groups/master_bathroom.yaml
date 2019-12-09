@@ -1,7 +1,7 @@
 name: Master Bathroom
 type: room
 icon: mdi:shower
-order: 3
+order: 4
 entities:
   - entity: light.master_bathroom_vanity
     name: Vanity
