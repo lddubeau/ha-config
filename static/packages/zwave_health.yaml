@@ -5,15 +5,46 @@ sensor:
         value_template: >-
           {{ states.zwave | selectattr('state', 'ne', 'ready') | map(attribute='entity_id') | join(",") }}
 
+input_boolean:
+  zwave_test_node_available:
+    name: "The zwave.test_node service is available."
+
 # A template sensor that iterates over a group won't get updated on changes in
 # the members of the group. It's a known defect^H^H^H^H^H^Hfeature of Home
 # Assistant. So we work around the issue by having an automation trigger
 # updates periodically.
 automation:
+  - alias: zwave.test_node Registered
+    trigger:
+      platform: event
+      event_type: service_registered
+      event_data:
+        domain: zwave
+        service: test_node
+    action:
+      service: input_boolean.turn_on
+      entity_id: input_boolean.zwave_test_node_available
+  - alias: zwave.test_node Removed
+    trigger:
+      platform: event
+      event_type: service_removed
+      event_data:
+        domain: zwave
+        service: test_node
+    action:
+      service: input_boolean.turn_off
+      entity_id: input_boolean.zwave_test_node_available
   - alias: Update Unhealthy ZWave Nodes
     trigger:
-      - platform: time_pattern
-        seconds: '/10'
+      platform: time_pattern
+      seconds: '/10'
+    # We want to perform the update only if zwave.test_node is available.
+    # This helps avoid an edge case when the zwave network has just been
+    # started and most nodes are not in the "ready" state.
+    condition:
+      - condition: state
+        entity_id: input_boolean.zwave_test_node_available
+        state: "on"
     action:
       - service: homeassistant.update_entity
         entity_id: sensor.unhealthy_zwave_nodes
