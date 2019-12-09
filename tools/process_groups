@@ -122,6 +122,7 @@ for (name, group) in groups.items():
         order = group["order"]
         if order in orders:
             raise Exception(f"room order {order} seen more than once")
+        orders.add(order)
         # Create one view per room.
         dump_yaml(os.path.join(outdir, "views", f"{name}.yaml"),
                   make_room_view(group["name"],
