@@ -16,8 +16,8 @@ entities:
     tap_action:
       action: toggle
   - entity: media_player.living_room_tv
-    name:  Living Room TV
+    name:  TV
   - entity: media_player.living_room_chromecast
-    name: Living Room Chromecast
+    name: Chromecast
   - entity: media_player.living_room_home
     name: Google Home
