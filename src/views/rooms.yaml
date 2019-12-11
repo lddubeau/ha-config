@@ -3,17 +3,14 @@ icon: mdi:floor-plan
 path: rooms
 background: black
 theme: slate
+badges:
+  - alarm_control_panel.area001
+  - sensor.time
+  - sensor.date
+  - sun.sun
+  - sensor.weather_symbol
+  - sensor.weather_cloud_coverage
+  - sensor.weather_temperature
+  - sensor.luminance_front_window
 cards:
-  !flatten
-    - type: glance
-      title: Environment
-      entities:
-        - alarm_control_panel.area001
-        - sensor.time
-        - sensor.date
-        - sun.sun
-        - sensor.weather_symbol
-        - sensor.weather_cloud_coverage
-        - sensor.weather_temperature
-        - sensor.luminance_front_window
-    - !rooms
+  !rooms
