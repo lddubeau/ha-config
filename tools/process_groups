@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 
 import datetime
-from collections import OrderedDict
 import os
 import os.path
 import yaml
+from collections.abc import Iterable
 
 indir = "src"
 outdir = "out"
-
-groups = {}
-
 
 # https://stackoverflow.com/a/39681672
 class FixedDumper(yaml.Dumper):
@@ -19,20 +16,29 @@ class FixedDumper(yaml.Dumper):
         return super(FixedDumper, self).increase_indent(flow, False)
 
 
+def dump_yaml(out_path, content):
+    with open(out_path, "w") as outf:
+        outf.write(f"""\
+# This file was generated. Do not edit by hand.
+# Generated at {datetime.datetime.now()}.
+""")
+        yaml.dump(content, outf, default_flow_style=False, Dumper=FixedDumper)
+
 # https://stackoverflow.com/a/52621703
 yaml.add_representer(dict,
                      lambda self, data: yaml.representer.SafeRepresenter
                      .represent_dict(self, data.items()))
 
-def flatten_constructor(loader, node):
-    value = loader.construct_sequence(node)
-    final = []
-    for x in value:
-        if isinstance(x, list):
-            final = final + x
+def flatten(it):
+    for x in it:
+        if isinstance(x, Iterable):
+            for y in x:
+                yield y
         else:
-            final.append(x)
-    return final
+            yield x
+
+def flatten_constructor(loader, node):
+    return list(flatten(loader.construct_sequence(node)))
 
 yaml.add_constructor("!flatten", flatten_constructor)
 
@@ -50,14 +56,6 @@ yaml.add_constructor("!include", lambda loader,
 
 yaml.add_representer(Noop, lambda dumper,
                      obj: dumper.represent_scalar(obj.tag, obj.value))
-
-def dump_yaml(out_path, content):
-    with open(out_path, "w") as outf:
-        outf.write(f"""\
-# This file was generated. Do not edit by hand.
-# Generated at {datetime.datetime.now()}.
-""")
-        yaml.dump(content, outf, default_flow_style=False, Dumper=FixedDumper)
 
 def make_room_view(title, path, **kwargs):
     return dict(title=title,
@@ -83,106 +81,120 @@ def make_entity_card(entity):
                 entity=entity["entity"],
                 name=entity["name"])
 
-with os.scandir(os.path.join(indir, "groups")) as it:
-    for group in it:
-        with open(group.path, "r") as inf:
-            group_yaml_name = os.path.splitext(group.name)[0]
-            data = yaml.load(inf)
+def read_groups():
+    groups = {}
+    with os.scandir(os.path.join(indir, "groups")) as it:
+        for group in it:
+            with open(group.path, "r") as inf:
+                group_yaml_name = os.path.splitext(group.name)[0]
+                data = yaml.load(inf)
 
-            # Normalize entities to objects.
-            if "entities" in data:
+                # Normalize entities to objects.
                 data["entities"] = [dict(entity=entity) if
                                     isinstance(entity, str) else entity for
-                                    entity in data["entities"]]
-            else:
-                data["entities"] = []
+                                    entity in data["entities"]] \
+                    if "entities" in data else []
 
-            groups[group_yaml_name] = data
+                groups[group_yaml_name] = data
+    return groups
 
+def process_groups_into_rooms():
+    rooms = {}
+    orders = set()
+    for (name, group) in read_groups().items():
+        # Each group in the input is converted to a group in the output.
+        dump_yaml(os.path.join(outdir, "groups", f"{name}.yaml"),
+                  dict(name=group["name"],
+                       entities=[entity["entity"] for entity in
+                                 group["entities"]]))
 
-rooms = {}
-try:
-    os.mkdir(os.path.join(outdir, "groups"))
-except:
-    pass
+        if group.get("type", None) == "room":
+            order = group["order"]
+            if order in orders:
+                raise Exception(f"room order {order} seen more than once")
+            orders.add(order)
+            # Create one view per room.
+            dump_yaml(os.path.join(outdir, "views", f"{name}.yaml"),
+                      make_room_view(group["name"],
+                                     name,
+                                     icon=group.get("icon", None),
+                                     cards=[make_entity_card(entity)
+                                            for entity in group["entities"]]))
 
-try:
-    os.mkdir(os.path.join(outdir, "views"))
-except:
-    pass
+            # And remember which groups are rooms
+            rooms[name] = group
 
-orders = set()
-for (name, group) in groups.items():
-    # Each group in the input is converted to a group in the output.
-    dump_yaml(os.path.join(outdir, "groups", f"{name}.yaml"),
-              dict(name=group["name"],
-                   entities=[entity["entity"] for entity in group["entities"]]))
+    return rooms
 
-    if group.get("type", None) == "room":
-        order = group["order"]
-        if order in orders:
-            raise Exception(f"room order {order} seen more than once")
-        orders.add(order)
-        # Create one view per room.
-        dump_yaml(os.path.join(outdir, "views", f"{name}.yaml"),
-                  make_room_view(group["name"],
-                                 name,
-                                 icon=group.get("icon", None),
-                                 cards=[make_entity_card(entity)
-                                        for entity in group["entities"]]))
+def create_cloud_yaml(rooms):
+    #
+    # Create a cloud.yaml file for Google that tells where each entity is
+    # located
+    #
 
-        # And remember which groups are rooms
-        rooms[name] = group
+    # We don't put in this list those devices that Google already knows about.
+    excluded_from_cloud = set([
+        "media_player.office_speaker",
+        "media_player.kitchen_speaker",
+        "media_player.google_mini_er",
+        "media_player.living_room_chromecast",
+        "media_player.living_room_home",
+        "media_player.google_mini_mbr",
+        "media_player.craft_room_speaker"])
 
-# We also create a "rooms.yaml" group
-dump_yaml(os.path.join(outdir, "groups", "rooms.yaml"),
-          dict(name="Rooms",
-               entities=[f"group.{name}" for name in rooms.keys()]))
+    entity_id_to_cloud_config = {}
 
-def rooms_constructor(loader, node):
-    return [dict(title=room["name"],
-                 type="glance",
-                 entities=room["entities"]) for room in
-            sorted(rooms.values(), key=lambda x: x["order"])]
+    for room in rooms.values():
+        for entity in room["entities"]:
+            entity_id = entity["entity"]
+            if entity_id not in excluded_from_cloud:
+                entity_id_to_cloud_config[entity_id] = dict(room=room["name"])
 
-yaml.add_constructor(u"!rooms", rooms_constructor)
-
-def room_list_constructor(loader, node):
-    return [Noop("!include", os.path.join('views', 'rooms.yaml'))] + \
-        [Noop("!include", f"{os.path.join('views', name)}.yaml")
-         for (name, room) in sorted(rooms.items(), key=lambda x: x[1]["order"])]
-
-yaml.add_constructor(u'!room_list', room_list_constructor)
-
-# Create the rooms.yaml view.
-with open(os.path.join(indir, "views", "rooms.yaml"), "r") as inf:
-    dump_yaml(os.path.join(outdir, "views", "rooms.yaml"), yaml.load(inf))
-
-with open(os.path.join(indir, "ui-lovelace.yaml"), "r") as inf:
-    dump_yaml(os.path.join(outdir, "ui-lovelace.yaml"), yaml.load(inf))
+    dump_yaml(
+        os.path.join(outdir, "cloud.yaml"),
+        dict(google_actions=dict(entity_config=entity_id_to_cloud_config)))
 
 
-#
-# Create a cloud.yaml file for Google that tells where each entity is located
-#
+def process_file(path):
+    with open(os.path.join(indir, path), "r") as inf:
+        dump_yaml(os.path.join(outdir, path), yaml.load(inf))
 
-# We don't put in this list those devices that Google already knows about.
-excluded_from_cloud = set([
-    "media_player.office_speaker",
-    "media_player.kitchen_speaker",
-    "media_player.google_mini_er",
-    "media_player.living_room_chromecast",
-    "media_player.living_room_home",
-    "media_player.google_mini_mbr",
-    "media_player.craft_room_speaker"])
+def main():
+    try:
+        os.mkdir(os.path.join(outdir, "groups"))
+    except:
+        pass
 
-entity_id_to_cloud_config = {}
+    try:
+        os.mkdir(os.path.join(outdir, "views"))
+    except:
+        pass
 
-for room in rooms.values():
-    for entity in room["entities"]:
-        if entity["entity"] not in excluded_from_cloud:
-            entity_id_to_cloud_config[
-                entity["entity"]] = dict(room=room["name"])
+    rooms = process_groups_into_rooms()
 
-dump_yaml(os.path.join(outdir, "cloud.yaml"),
-          dict(google_actions=dict(entity_config=entity_id_to_cloud_config)))
+    # We also create a "rooms.yaml" group
+    dump_yaml(os.path.join(outdir, "groups", "rooms.yaml"),
+              dict(name="Rooms",
+                   entities=[f"group.{name}" for name in rooms.keys()]))
+
+    def rooms_constructor(loader, node):
+        return [dict(title=room["name"],
+                     type="glance",
+                     entities=room["entities"]) for room in
+                sorted(rooms.values(), key=lambda x: x["order"])]
+
+    yaml.add_constructor(u"!rooms", rooms_constructor)
+
+    def room_list_constructor(loader, node):
+        return [Noop("!include", os.path.join('views', 'rooms.yaml'))] + \
+            [Noop("!include", f"{os.path.join('views', name)}.yaml")
+             for (name, room) in sorted(rooms.items(),
+                                        key=lambda x: x[1]["order"])]
+
+    yaml.add_constructor(u'!room_list', room_list_constructor)
+
+    process_file(os.path.join("views", "rooms.yaml"))
+    process_file("ui-lovelace.yaml")
+    create_cloud_yaml(rooms)
+
+main()
