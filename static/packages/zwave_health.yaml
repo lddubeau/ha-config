@@ -1,18 +1,51 @@
 sensor:
+  # - platform: template
+  #   sensors:
+  #     unhealthy_zwave_nodes:
+  #       # A value cannot contain more the 255 characters. So we cannot just
+  #       # list the entity names in the value without running into that limit.
+  #       # Our strategy is:
+  #       #
+  #       # - List the values as the attribute "entities". Attributes don't have
+  #       #   length limits.
+  #       #
+  #       # - Create a bit field with the ZWave node ids and output that
+  #       #   bitfield as the value of this sensor. The maximum number of nodes
+  #       #   is less than 255. The maximum number is going to have a number of
+  #       #   digits smaller than 255. (And no, there's no integer overflow
+  #       #   either. Python 3 has no limit on the size of an integer.)
+  #       value_template: >-
+  #         {% set ns = namespace(acc=0) %}
+  #         {% for state in states.zwave if state.state != 'ready' %}
+  #           {% set ns.acc = ns.acc|bitwise_or(2 ** state.attributes.node_id) %}
+  #         {% endfor %}
+  #         {{ ns.acc }}
+  #       attribute_templates:
+  #         entities: >-
+  #           {{ states.zwave | selectattr('state', 'ne', 'ready') | map(attribute='entity_id') | join(",") }}
   - platform: template
     sensors:
       unhealthy_zwave_nodes:
+        # A value cannot contain more the 255 characters. So we cannot just
+        # list the entity names in the value without running into that limit.
+        # Our strategy is:
+        #
+        # - List the values as the attribute "entities". Attributes don't have
+        #   length limits.
+        #
+        # - Reduce the value template to a value indicating whether there are
+        #   problematic nodes "on" or not "off".
         value_template: >-
-          {{ states.zwave | selectattr('state', 'ne', 'ready') | map(attribute='entity_id') | join(",") }}
+            {{ "on" if (states.zwave | selectattr('state', 'ne', 'ready')) else "off" }}
+        attribute_templates:
+          entities: >-
+            {{ states.zwave | selectattr('state', 'ne', 'ready') | map(attribute='entity_id') | join(",") }}
+
 
 input_boolean:
   zwave_test_node_available:
     name: "The zwave.test_node service is available."
 
-# A template sensor that iterates over a group won't get updated on changes in
-# the members of the group. It's a known defect^H^H^H^H^H^Hfeature of Home
-# Assistant. So we work around the issue by having an automation trigger
-# updates periodically.
 automation:
   - alias: zwave.test_node Registered
     trigger:
@@ -34,6 +67,10 @@ automation:
     action:
       service: input_boolean.turn_off
       entity_id: input_boolean.zwave_test_node_available
+   # A template sensor that iterates over a group won't get updated on changes in
+   # the members of the group. It's a known defect^H^H^H^H^H^Hfeature of Home
+   # Assistant. So we work around the issue by having an automation trigger
+   # updates periodically.
   - alias: Update Unhealthy ZWave Nodes
     trigger:
       platform: time_pattern
@@ -51,21 +88,21 @@ automation:
   - alias: Test Unhealthy ZWave Nodes
     trigger:
       platform: template
-      # This triggers if unhealthy_zwave_nodes has not changed for 5 minutes.
+      # This triggers if unhealthy_zwave_nodes has not updated for 5 minutes.
       # and the last time this automation triggered was earlier than the last
-      # time the list of unhealthy_zwave_nodes changed.
+      # time the list of unhealthy_zwave_nodes updated.
       #
       # last_triggered may be None if the automation was never triggered....
       value_template: >-
-        {% set last_changed = states.sensor.unhealthy_zwave_nodes.last_changed %}
+        {% set last_updated = states.sensor.unhealthy_zwave_nodes.last_updated %}
         {% set last_triggered =
            states.automation.test_unhealthy_zwave_nodes.attributes.last_triggered %}
         {% set time_now = states.sensor.time.last_changed %}
         {{ ((last_triggered is none) or
             ((time_now - last_triggered).total_seconds() > 300)) and
-           ((time_now - last_changed).total_seconds() > 300) }}
+           ((time_now - last_updated).total_seconds() > 300) }}
     action:
       service: python_script.test_zwave_nodes
       data_template:
         entity_id: >-
-          {{ states.sensor.unhealthy_zwave_nodes.state or "" }}
+          {{ state_attr("sensor.unhealthy_zwave_nodes", "entities")  or "" }}
