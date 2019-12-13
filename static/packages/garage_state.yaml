@@ -1,0 +1,7 @@
+binary_sensor:
+  - platform: template
+    sensors:
+      garage_is_normal:
+        value_template: >-
+            {{ is_state("sensor.garage_door", "Normal") and
+               is_state("sensor.garage_side", "Normal") }}

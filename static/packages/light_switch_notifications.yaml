@@ -1,0 +1,66 @@
+script:
+  set_led_on_all_lzw31_sn_switches:
+    alias: Set the LED on all LZW31 SN Switches
+    description: Set the LED light on all the LZW31 SN switches known to HA.
+    fields:
+      color:
+        description: >-
+          See corresponding parameter in python_script.set_lzw31_sn_led
+      level:
+        description: >-
+          See corresponding parameter in python_script.set_lzw31_sn_led
+      duration:
+        description: >-
+          See corresponding parameter in python_script.set_lzw31_sn_led
+      effect:
+        description: >-
+          See corresponding parameter in python_script.set_lzw31_sn_led
+    sequence:
+      - service: python_script.set_lzw31_sn_led
+        data_template:
+          entity_id: >-
+            {{ expand("group.inovelli_devices_with_notifications") |
+               map(attribute="entity_id") | join(",") }}
+          color: "{{ color }}"
+          level: "{{ level }}"
+          duration: "{{ duration }}"
+          effect: "{{ effect }}"
+
+automation:
+  - alias: Update Inovelli Switch Group
+    trigger:
+      # We have to listen to all these events
+      # See https://github.com/home-assistant/home-assistant/issues/28796
+      - platform: event
+        event_type: zwave.network_ready
+      - platform: event
+        event_type: zwave.network_complete
+      - platform: event
+        event_type: zwave.network_complete_some_dead
+      - platform: event
+        event_type: entity_registry_updated
+    action:
+      service: group.set
+      data:
+        object_id: inovelli_devices_with_notifications
+        name: Inovelli Devices With Notifications
+        view: true
+      data_template:
+        entities: >-
+          {{ states.zwave | selectattr("attributes.product_name", "eq",
+             "LZW31-SN Dimmer Red Series") | map(attribute="entity_id") |
+             join(" ,") }}
+  - alias: Set Light Switch Notification to Match Garage State
+    trigger:
+      - platform: state
+        entity_id:
+          - binary_sensor.garage_is_normal
+          - group.inovelli_devices_with_notifications
+    action:
+      service: script.set_led_on_all_lzw31_sn_switches
+      data:
+        color: red
+        effect: slow_blink
+      data_template:
+        level: >-
+          {{ 0 if is_state("binary_sensor.garage_is_normal", "on") else "on" }}

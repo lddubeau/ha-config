@@ -1,0 +1,24 @@
+set_lzw31_sn_led:
+  description: Set the LED color, intensity, etc. on a LZW31-SN device.
+  fields:
+    entity_id:
+      description: >-
+        A comma-separated list of ZWave entity ID of devices to operate on.
+        (Optional, the script does nothing if omitted.)
+    color:
+      description: >-
+        The color to set the LED to. A number between 0 and 255, inclusively. Or
+        a keyword among: red, orange, yellow, green, cyan, blue, pink.
+        (Required.)
+    level:
+      description: >-
+        A number between 0 and 10, inclusively. Or a keyword among: on (10), off
+        (0). (Optional. Default: "on".)
+    duration:
+      description: >-
+        A number in seconds between 0 and 255, inclusively. 255 means "infinite
+        duration". (Optional. Default: 255.)
+    effect:
+      description: >-
+        A number between 1 and 4 inclusively. Or a keyword among: solid (1),
+        pulse (2), fast_blink (3), slow_blink (4). (Optional. Default: "solid".)
