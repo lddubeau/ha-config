@@ -22,3 +22,16 @@ set_lzw31_sn_led:
       description: >-
         A number between 1 and 4 inclusively. Or a keyword among: solid (1),
         pulse (2), fast_blink (3), slow_blink (4). (Optional. Default: "solid".)
+set_state:
+  description: Set the state of an entity.
+  fields:
+    entity_id:
+      description: >-
+        The entity to operate on. (Mandatory.)
+    state:
+      description: >-
+        The new state of the entity. (Optional. The state is not changed if not
+        specified.)
+    attributes:
+      description: >-
+        A dictionary of new attribute values.

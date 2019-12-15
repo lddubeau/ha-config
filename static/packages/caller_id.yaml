@@ -1,0 +1,52 @@
+sensor:
+  - platform: modem_callerid
+    device: /dev/modem
+
+notify:
+  - name: caller_id_notify_group
+    platform: group
+    services:
+      - service: living_room_tv
+      - service: basement_tv
+
+script:
+  normalize_caller_id:
+    sequence:
+      - service: python_script.set_state
+        data:
+          entity_id: sensor.normalized_caller_id
+        data_template:
+          state: "{{ states.sensor.modem_callerid.state }}"
+          attributes:
+            cid_time: >-
+              {{ state_attr("sensor.modem_callerid", "cid_time") }}
+            cid_number: >-
+              {{ state_attr("sensor.modem_callerid", "cid_number") }}
+            cid_name: >-
+              {% set table = {
+                  "3013393369": "Louis Dubeau",
+                }
+              %}
+              {% set override =
+                 table.get(state_attr("sensor.modem_callerid", "cid_number")) %}
+              {{ override if override is not none else
+                 state_attr("sensor.modem_callerid", "cid_name") }}
+
+automation:
+  - alias: Normalize Caller ID
+    trigger:
+      platform: state
+      entity_id: sensor.modem_callerid
+    action:
+      service: script.normalize_caller_id
+  - alias: Notify Caller ID
+    trigger:
+      platform: state
+      entity_id: sensor.normalized_caller_id
+      to: "callerid"
+    action:
+      service: notify.caller_id_notify_group
+      data:
+        message: >-
+          Call from {{ state_attr('sensor.normalized_caller_id', 'cid_name') }}
+          at {{ state_attr('sensor.normalized_caller_id', 'cid_number') }}
