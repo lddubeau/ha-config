@@ -1,3 +1,10 @@
+test_zwave_nodes:
+  description: Test a series of ZWave nodes.
+  fields:
+    entity_id:
+      description: >-
+        A comma-separated list of ZWave entity ID of devices to test.
+        (Optional, the script does nothing if omitted.)
 set_lzw31_sn_led:
   description: Set the LED color, intensity, etc. on a LZW31-SN device.
   fields:
