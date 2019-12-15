@@ -83,8 +83,6 @@ if entity_id is not None and entity_id != "":
     value = a + b * 256 + c * 65536 + d * 16777216
 
     for entity in entity_id.split(","):
-        # logger.warning("Setting LED of {}".format(entity))
-
         state = hass.states.get(entity)
 
         if state is None:

@@ -7,8 +7,7 @@ if entity_id is not None:
     for entity in entity_id.split(","):
         state = hass.states.get(entity)
         node_id = state.attributes["node_id"]
-        logger.warning("Sending test command to {} (id: {})"
-                       .format(entity, node_id))
+        logger.warning("Sending test command to %s (id: %s)", entity, node_id)
         hass.services.call('zwave', 'test_node',
                            {'node_id': node_id},
                            False)
