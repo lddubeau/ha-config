@@ -1,0 +1,19 @@
+notify:
+  - name: alarm_status_notify_group
+    platform: group
+    services:
+      - service: living_room_tv
+      - service: basement_tv
+      - service: google_home
+
+automation:
+  - alias: Alarm Failure
+    trigger:
+      - platform: state
+        entity_id: switch.elk_arming_failed_output_207
+        from: "off"
+        to: "on"
+    action:
+      service: notify.alarm_status_notify_group
+      data:
+        message: "The alarm failed to arm due to unsecured zones."
