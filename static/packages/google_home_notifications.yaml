@@ -1,0 +1,9 @@
+notify:
+  - name: google_home
+    platform: rest
+    resource: https://ha.lddubeau.com:3000/assistant
+    method: POST_JSON
+    message_param_name: command
+    data:
+      user: Home
+      broadcast: true

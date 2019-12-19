@@ -8,6 +8,7 @@ notify:
     services:
       - service: living_room_tv
       - service: basement_tv
+      - service: google_home
 
 script:
   normalize_caller_id:
@@ -21,10 +22,16 @@ script:
             cid_time: >-
               {{ state_attr("sensor.modem_callerid", "cid_time") }}
             cid_number: >-
-              {{ state_attr("sensor.modem_callerid", "cid_number") }}
+              {% set orig = state_attr("sensor.modem_callerid", "cid_number") %}
+              {% set len = orig | length %}
+              {% if len > 10 %}{{ orig[0:-10] }}-{% endif %}
+              {% if len > 7 %}{{ orig[-10:-7] }}-{% endif %}
+              {% if len > 4 %}{{ orig[-7:-4] }}-{% endif %}
+              {{ orig[-4:] }}
             cid_name: >-
               {% set table = {
                   "3013393369": "Louis Dubeau",
+                  "3017887720": "Lisa Solomon",
                 }
               %}
               {% set override =
