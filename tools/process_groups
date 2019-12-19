@@ -73,6 +73,7 @@ def make_entity_card(entity):
         entity_type = {
             "light": "light",
             "media_player": "media-control",
+            "sensor": "sensor",
         }[domain]
     except KeyError:
         entity_type = None

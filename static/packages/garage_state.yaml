@@ -2,6 +2,7 @@ binary_sensor:
   - platform: template
     sensors:
       garage_is_normal:
+        friendly_name: "Garage is Normal"
         value_template: >-
-            {{ is_state("sensor.garage_door", "Normal") and
-               is_state("sensor.garage_side", "Normal") }}
+          {{ is_state("sensor.garage_door", "Normal") and
+          is_state("sensor.garage_side", "Normal") }}

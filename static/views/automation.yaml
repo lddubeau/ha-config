@@ -11,10 +11,12 @@ cards:
       - sensor.date
       - binary_sensor.dark_inside
       - binary_sensor.dark_outside
+      - binary_sensor.garage_is_normal
   - type: entities
     title: Presence
     entities:
       - binary_sensor.away
+      - binary_sensor.louis_away
       - binary_sensor.walkway_motion
   - type: entities
     title: Travel
