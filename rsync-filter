@@ -16,3 +16,4 @@ P /ozw-config
 P /zwave_device_config.yaml
 P /.git
 P /.gitignore
+P __pycache__
