@@ -1,0 +1,3 @@
+- platform: nws
+  api_key: ldd@lddubeau.com
+  mode: daynight

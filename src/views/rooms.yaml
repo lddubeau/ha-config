@@ -8,9 +8,11 @@ badges:
   - sensor.time
   - sensor.date
   - sun.sun
-  - sensor.weather_symbol
   - sensor.weather_cloud_coverage
   - sensor.weather_temperature
   - sensor.luminance_front_window
 cards:
-  !rooms
+  !flatten
+    - type: weather-forecast
+      entity: weather.kfdk
+    - !rooms
