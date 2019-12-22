@@ -1,7 +1,7 @@
 name: Dining Room
 type: room
 order: 2
-icon: mdi:table-chair
+icon: mdi:silverware
 entities:
   - entity: light.dining_room_light
     name: Light

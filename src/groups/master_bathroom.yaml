@@ -1,6 +1,6 @@
 name: Master Bathroom
 type: room
-icon: mdi:shower
+icon: mdi:shower-head
 order: 4
 entities:
   - entity: light.master_bathroom_vanity
