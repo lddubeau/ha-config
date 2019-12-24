@@ -87,3 +87,12 @@ lovelace:
 system_health:
 
 python_script:
+
+mqtt:
+  # We do not use SSL for this connection because it is within the network
+  # created for our Docker containers.
+  broker: mosquitto
+  username: ha
+  password: !secret mosquitto_password
+  discovery: true
+  discovery_prefix: ha
