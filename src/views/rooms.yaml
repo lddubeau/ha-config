@@ -11,6 +11,8 @@ badges:
   - sensor.weather_cloud_coverage
   - sensor.weather_temperature
   - sensor.luminance_front_window
+  - sensor.usps_mail_delivered
+
 cards:
   !flatten
     - type: weather-forecast

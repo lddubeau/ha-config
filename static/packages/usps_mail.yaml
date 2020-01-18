@@ -1,0 +1,28 @@
+notify:
+  - name: usps_mail_notify_group
+    platform: group
+    services:
+      - service: living_room_tv
+      - service: basement_tv
+      - service: google_home
+
+automation:
+  - alias: "Reset USPS Mail"
+    trigger:
+      platform: time
+      at: "00:00:01"
+    action:
+      - service: mqtt.publish
+        data:
+          topic: ha/sensor/usps/mail_delivered/state
+          payload: "unknown"
+          retain: true
+  - alias: "USPS Mail Delivered"
+    trigger:
+      platform: state
+      entity_id: sensor.usps_mail_delivered
+      to: "yes"
+    action:
+      - service: notify.usps_mail_notify_group
+        data:
+          message: "USPS mail has been delivered."
