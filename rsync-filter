@@ -17,3 +17,4 @@ P /zwave_device_config.yaml
 P /.git
 P /.gitignore
 P __pycache__
+P webostv.conf
