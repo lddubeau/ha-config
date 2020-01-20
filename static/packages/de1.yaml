@@ -1,13 +1,12 @@
-notify:
-  - name: de1_automate
-    platform: llamalab_automate
-    api_key: !secret de1_automate_api_key
-    to: !secret de1_automate_email
+# notify:
+#   - name: de1_automate
+#     platform: llamalab_automate
+#     api_key: !secret de1_automate_api_key
+#     to: !secret de1_automate_email
 
 script:
   de1_wake:
     alias: Wake the DE1
     sequence:
-      - service: notify.de1_automate
-        data:
-          message: Wake DE1
+      - service: switch.turn_on
+        entity_id: switch.de1_power
