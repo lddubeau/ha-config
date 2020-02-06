@@ -44,7 +44,6 @@ automation:
       data:
         object_id: inovelli_devices_with_notifications
         name: Inovelli Devices With Notifications
-        view: true
       data_template:
         entities: >-
           {{ states.zwave | selectattr("attributes.product_name", "eq",
