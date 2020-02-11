@@ -3,11 +3,16 @@ sensor:
     device: /dev/modem
 
 notify:
-  - name: caller_id_notify_group
+  - name: caller_id_visual_notify_group
     platform: group
     services:
       - service: living_room_tv
       - service: basement_tv
+
+notify:
+  - name: caller_id_audio_notify_group
+    platform: group
+    services:
       - service: google_home
 
 script:
@@ -52,8 +57,14 @@ automation:
       entity_id: sensor.normalized_caller_id
       to: "callerid"
     action:
-      service: notify.caller_id_notify_group
-      data:
-        message: >-
-          Call from {{ state_attr('sensor.normalized_caller_id', 'cid_name') }}
-          at {{ state_attr('sensor.normalized_caller_id', 'cid_number') }}
+      - service: notify.caller_id_visual_notify_group
+        data:
+          message: >-
+            Call from {{ state_attr('sensor.normalized_caller_id',
+                        'cid_name') }}
+            at {{ state_attr('sensor.normalized_caller_id', 'cid_number') }}
+      - service: notify.caller_id_audio_notify_group
+        data:
+          message: >-
+            Call from
+            {{ state_attr('sensor.normalized_caller_id', 'cid_name') }}
