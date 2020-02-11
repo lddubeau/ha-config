@@ -73,13 +73,14 @@ def make_entity_card(entity):
             "media_player": "media-control",
             "sensor": "sensor",
             "script": "entity-button",
+            "switch": "entity-button",
         }[domain]
     except KeyError:
         entity_type = None
 
     return dict(type=entity_type,
                 entity=entity["entity"],
-                name=entity["name"])
+                name=entity.get("name"))
 
 def read_groups():
     groups = {}
@@ -98,9 +99,8 @@ def read_groups():
                 groups[group_yaml_name] = data
     return groups
 
-def process_groups_into_rooms():
+def process_groups_into_rooms(room_order):
     rooms = {}
-    orders = set()
     for (name, group) in read_groups().items():
         # Each group in the input is converted to a group in the output.
         dump_yaml(os.path.join(outdir, "groups", f"{name}.yaml"),
@@ -109,10 +109,8 @@ def process_groups_into_rooms():
                                  group["entities"]]))
 
         if group.get("type", None) == "room":
-            order = group["order"]
-            if order in orders:
-                raise Exception(f"room order {order} seen more than once")
-            orders.add(order)
+            if name not in room_order:
+                raise Exception("room not listed in room_order.yaml: " + name)
             # Create one view per room.
             dump_yaml(os.path.join(outdir, "views", f"{name}.yaml"),
                       make_room_view(group["name"],
@@ -159,6 +157,11 @@ def process_file(path):
     with open(os.path.join(indir, path), "r") as inf:
         dump_yaml(os.path.join(outdir, path), yaml.load(inf))
 
+
+def read_room_order():
+    with open(os.path.join(indir, "room_order.yaml")) as inf:
+        return yaml.load(inf)
+
 def main():
     try:
         os.mkdir(os.path.join(outdir, "groups"))
@@ -170,7 +173,8 @@ def main():
     except:
         pass
 
-    rooms = process_groups_into_rooms()
+    room_order = read_room_order()
+    rooms = process_groups_into_rooms(room_order)
 
     # We also create a "rooms.yaml" group
     dump_yaml(os.path.join(outdir, "groups", "rooms.yaml"),
@@ -180,8 +184,8 @@ def main():
     def rooms_constructor(loader, node):
         return [dict(title=room["name"],
                      type="glance",
-                     entities=room["entities"]) for room in
-                sorted(rooms.values(), key=lambda x: x["order"])]
+                     entities=room["entities"]) for [_, room] in
+                sorted(rooms.items(), key=lambda x: room_order.index(x[0]))]
 
     yaml.add_constructor(u"!rooms", rooms_constructor)
 

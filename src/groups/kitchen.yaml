@@ -9,6 +9,8 @@ entities:
       action: toggle
   - entity: media_player.kitchen_speaker
     name: Kitchen Speaker
+  - entity: switch.de1_power
+    name: DE1 Power
   - entity: script.de1_wake
     name: Wake the DE1
     icon: mdi:coffee

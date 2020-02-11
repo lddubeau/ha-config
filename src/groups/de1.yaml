@@ -1,0 +1,11 @@
+name: DE1
+type: room
+icon: mdi:coffee
+order: 1.2
+entities:
+  - entity: switch.de1_power
+  - entity: sensor.de1_current_grouphead_temperature
+  - entity: sensor.de1_water_level
+  - entity: sensor.de1_water_refill_level
+  - entity: script.de1_wake
+    name: Wake the DE1
