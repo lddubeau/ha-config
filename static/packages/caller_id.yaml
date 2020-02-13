@@ -8,8 +8,6 @@ notify:
     services:
       - service: living_room_tv
       - service: basement_tv
-
-notify:
   - name: caller_id_audio_notify_group
     platform: group
     services:
