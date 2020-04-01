@@ -51,6 +51,10 @@ sun:
 recorder:
   purge_keep_days: 7
   exclude:
+    domains:
+      - group
+      - media_player
+      - zwave
     entities:
       - sensor.date
       - sensor.time
