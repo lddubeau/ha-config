@@ -1,7 +1,6 @@
 name: Craft Room
 type: room
 icon: mdi:feather
-order: 7
 entities:
   - entity: light.craft_room_lights_entrance
     name: Entrance Lights

@@ -1,7 +1,6 @@
 name: DE1
 type: room
 icon: mdi:coffee
-order: 1.2
 entities:
   - entity: switch.de1_power
   - entity: sensor.de1_current_grouphead_temperature

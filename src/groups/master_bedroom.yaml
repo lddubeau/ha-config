@@ -1,7 +1,6 @@
 name: Master Bedroom
 type: room
 icon: mdi:hotel
-order: 3
 entities:
   - entity: light.louis_bedside_lamp
     name: Louis Lamp

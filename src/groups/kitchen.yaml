@@ -1,7 +1,6 @@
 name: Kitchen
 type: room
 icon: mdi:stove
-order: 1
 entities:
   - entity: light.kitchen_lights
     name: Light

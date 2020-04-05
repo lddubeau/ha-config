@@ -175,6 +175,7 @@ def main():
 
     room_order = read_room_order()
     rooms = process_groups_into_rooms(room_order)
+    sorted_rooms = sorted(rooms.items(), key=lambda x: room_order.index(x[0]))
 
     # We also create a "rooms.yaml" group
     dump_yaml(os.path.join(outdir, "groups", "rooms.yaml"),
@@ -184,16 +185,14 @@ def main():
     def rooms_constructor(loader, node):
         return [dict(title=room["name"],
                      type="glance",
-                     entities=room["entities"]) for [_, room] in
-                sorted(rooms.items(), key=lambda x: room_order.index(x[0]))]
+                     entities=room["entities"]) for (_, room) in sorted_rooms]
 
     yaml.add_constructor(u"!rooms", rooms_constructor)
 
     def room_list_constructor(loader, node):
         return [Noop("!include", os.path.join('views', 'rooms.yaml'))] + \
             [Noop("!include", f"{os.path.join('views', name)}.yaml")
-             for (name, room) in sorted(rooms.items(),
-                                        key=lambda x: x[1]["order"])]
+             for (name, _) in sorted_rooms]
 
     yaml.add_constructor(u'!room_list', room_list_constructor)
 

@@ -1,6 +1,5 @@
 name: Living Room
 type: room
-order: 0
 icon: mdi:sofa
 entities:
   - entity: light.floor_lamp_couch_deb_side_lr

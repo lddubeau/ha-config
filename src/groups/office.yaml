@@ -1,7 +1,6 @@
 name: Office
 type: room
 icon: mdi:desk-lamp
-order: 5
 entities:
   - entity: light.office_light
     name: Lights

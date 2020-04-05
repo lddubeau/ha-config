@@ -1,7 +1,6 @@
 name: Entertainment Room
 type: room
 icon: mdi:popcorn
-order: 6
 entities:
   - entity: light.floor_lamp_er
     name: Floor Lamp
