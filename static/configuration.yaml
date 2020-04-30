@@ -83,7 +83,6 @@ sensor: !include_dir_merge_list sensors/
 binary_sensor: !include_dir_merge_list binary_sensors/
 media_player: !include_dir_list media_players/
 input_datetime: !include_dir_named input_datetimes/
-weather: !include weather.yaml
 
 lovelace:
   mode: yaml

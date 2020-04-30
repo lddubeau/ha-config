@@ -16,5 +16,7 @@ badges:
 cards:
   !flatten
     - type: weather-forecast
-      entity: weather.kfdk
+      entity: weather.kfdk_daynight
+    - type: weather-forecast
+      entity: weather.kfdk_hourly
     - !rooms
