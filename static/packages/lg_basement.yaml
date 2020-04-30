@@ -1,5 +1,5 @@
 webostv:
-  host: 192.168.10.101
+  host: 192.168.10.3
   name: Basement TV
   turn_on_action:
     service: wake_on_lan.send_magic_packet

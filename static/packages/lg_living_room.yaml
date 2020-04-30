@@ -1,5 +1,5 @@
 webostv:
-  host: 192.168.10.102
+  host: 192.168.10.4
   name: Living Room TV
   turn_on_action:
     service: wake_on_lan.send_magic_packet
