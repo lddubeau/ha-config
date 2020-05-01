@@ -1,4 +1,4 @@
-LIVE_HOST=pi@ha
+LIVE_HOST=ha@ha
 LIVE_HOME=~/src/ha-docker/
 LIVE_CONFIG=$(LIVE_HOME)ha-config/
 
