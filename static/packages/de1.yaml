@@ -5,8 +5,97 @@
 #     to: !secret de1_automate_email
 
 script:
+  # Use this script as the general entry point for waking the DE1
   de1_wake:
     alias: Wake the DE1
     sequence:
+      - service_template: >-
+          script.{{ 'report_de1_unavailable' if
+          is_state('switch.de1_power', 'unavailable') else 'turn_on_de1' }}
+  report_de1_unavailable:
+    alias: Report that the DE1 is not available
+    sequence:
+      - service: notify.de1_send_text_to_louis
+        data:
+          message: "DE1 is not available!"
+  # Calling this script directly is almost always wrong
+  turn_on_de1:
+    alias: Turn on the DE1
+    sequence:
       - service: switch.turn_on
         entity_id: switch.de1_power
+      - wait_template: "{{ is_state('switch.de1_power', 'on')}}"
+        timeout:
+          seconds: 5
+      - condition: state
+        entity_id: switch.de1_power
+        state: "off"
+      - service: notify.de1_send_text_to_louis
+        data:
+          message: "DE1 did not power on!"
+
+input_number:
+  de1_temperature_readiness_threshold:
+    name: DE1 Temperature Readiness Threshold
+    min: 0
+    # Max is required but more than 20 celsius difference does not make much
+    # sense.
+    max: 20
+    mode: box
+    unit_of_measurement: Celsius
+
+sensor:
+  - platform: template
+    sensors:
+      de1_target_minus_actual_grouphead_temperature:
+        unit_of_measurement: Celsius
+        value_template: >-
+          {% set target = states('sensor.de1_target_grouphead_temperature') |
+             float(None) %}
+          {% set current = states('sensor.de1_current_grouphead_temperature') |
+             float(None) %}
+          {{ "unavailable" if None in (target, current) else target - current }}
+      de1_water_level_above_refill:
+        unit_of_measurement: mm
+        value_template: >-
+          {% set level = states('sensor.de1_water_level') | float(None) %}
+          {% set refill = states('sensor.de1_water_refill_level') |
+             float(None) %}
+          {{ "unavailable" if None in (level, refil) else level - refill }}
+
+binary_sensor:
+  - platform: template
+    sensors:
+      de1_temperature_ready:
+        value_template: >-
+          {% set diff =
+            states('sensor.de1_target_minus_actual_grouphead_temperature') |
+             float(None) %}
+          {{ "unavailable" if diff is none else
+             diff < states('input_number.de1_temperature_readiness_threshold') |
+             float }}
+
+notify:
+  - name: de1_send_text_to_louis
+    platform: smtp
+    sender: !secret de1_text_sender
+    recipient: !secret louis_text_recipient
+    server: smtp.gmail.com
+    port: 465
+    encryption: tls
+    timeout: 15
+    username: !secret de1_text_sender
+    password: !secret de1_smtp_password
+
+automation:
+  - alias: Temperature Ready
+    trigger:
+      platform: state
+      entity_id: binary_sensor.de1_temperature_ready
+      to: "on"
+      for:
+        seconds: 1
+    action:
+      - service: notify.de1_send_text_to_louis
+        data:
+          message: "DE1 is ready!"
