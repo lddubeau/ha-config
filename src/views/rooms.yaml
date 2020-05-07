@@ -15,6 +15,13 @@ badges:
 
 cards:
   !flatten
+    - type: entities
+      title: Home Assistant
+      show_header_toggle: false
+      entities:
+        - sensor.ha_version
+        - sensor.ha_pypi_version
+        - sensor.ha_version_docker
     - type: weather-forecast
       entity: weather.kfdk_daynight
     - type: weather-forecast

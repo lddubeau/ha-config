@@ -1,0 +1,10 @@
+sensor:
+  - platform: version
+    source: docker
+    name: ha_version_docker
+  - platform: version
+    name: ha_version
+    source: local
+  - platform: version
+    name: ha_pypi_version
+    source: pypi
