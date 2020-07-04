@@ -16,9 +16,6 @@ frontend:
 config:
 
 http:
-  # api_password: !secret http_password
-  # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
-  base_url: https://shunya:8123
 
 # Checks for available updates
 # Note: This component will send some information about your system to
