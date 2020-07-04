@@ -12,6 +12,7 @@ script:
       - service_template: >-
           script.{{ 'report_de1_unavailable' if
           is_state('switch.de1_power', 'unavailable') else 'turn_on_de1' }}
+  # Calling this script directly is almost always wrong
   report_de1_unavailable:
     alias: Report that the DE1 is not available
     sequence:
@@ -43,6 +44,14 @@ input_number:
     max: 20
     mode: box
     unit_of_measurement: Celsius
+  de1_water_warning_threshold:
+    name: DE1 Water Warning Threshold
+    min: 0
+    # Max is required but more than 20 mm difference does not make much
+    # sense.
+    max: 20
+    mode: box
+    unit_of_measurement: mm
 
 sensor:
   - platform: template
@@ -74,6 +83,13 @@ binary_sensor:
           {{ "unavailable" if diff is none else
              diff < states('input_number.de1_temperature_readiness_threshold') |
              float }}
+      de1_water_low:
+        value_template: >-
+          {% set diff = states('sensor.de1_water_level_above_refill') |
+             float(None) %}
+          {{ "unavailable" if diff is none else
+             diff < states('input_number.de1_water_warning_threshold') |
+             float }}
 
 notify:
   - name: de1_send_text_to_louis
@@ -99,3 +115,26 @@ automation:
       - service: notify.de1_send_text_to_louis
         data:
           message: "DE1 is ready!"
+  - alias: Water Low
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.de1_water_low
+        to: "on"
+        for:
+          seconds: 2
+      - platform: state
+        entity_id: switch.de1_power
+        to: "on"
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: switch.de1_power
+          state: "on"
+        - condition: state
+          entity_id: binary_sensor.de1_water_low
+          state: "on"
+    action:
+      - service: notify.de1_send_text_to_louis
+        data:
+          message: "DE1 is low on water!"

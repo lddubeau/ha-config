@@ -1,0 +1,11 @@
+notify:
+  - name: text_louis
+    platform: smtp
+    sender: !secret louis_text_sender
+    recipient: !secret louis_text_recipient
+    server: mail.lddubeau.com
+    port: 465
+    encryption: tls
+    timeout: 15
+    username: !secret louis_smtp_username
+    password: !secret louis_smtp_password
