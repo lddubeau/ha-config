@@ -124,35 +124,6 @@ def process_groups_into_rooms(room_order):
 
     return rooms
 
-def create_cloud_yaml(rooms):
-    #
-    # Create a cloud.yaml file for Google that tells where each entity is
-    # located
-    #
-
-    # We don't put in this list those devices that Google already knows about.
-    excluded_from_cloud = set([
-        "media_player.office_speaker",
-        "media_player.kitchen_speaker",
-        "media_player.google_mini_er",
-        "media_player.living_room_chromecast",
-        "media_player.living_room_home",
-        "media_player.google_mini_mbr",
-        "media_player.craft_room_speaker"])
-
-    entity_id_to_cloud_config = {}
-
-    for room in rooms.values():
-        for entity in room["entities"]:
-            entity_id = entity["entity"]
-            if entity_id not in excluded_from_cloud:
-                entity_id_to_cloud_config[entity_id] = dict(room=room["name"])
-
-    dump_yaml(
-        os.path.join(outdir, "cloud.yaml"),
-        dict(google_actions=dict(entity_config=entity_id_to_cloud_config)))
-
-
 def process_file(path):
     with open(os.path.join(indir, path), "r") as inf:
         dump_yaml(os.path.join(outdir, path), yaml.load(inf))
@@ -198,6 +169,5 @@ def main():
 
     process_file(os.path.join("views", "rooms.yaml"))
     process_file("ui-lovelace.yaml")
-    create_cloud_yaml(rooms)
 
 main()

@@ -68,7 +68,7 @@ tts:
 
 wake_on_lan:
 
-cloud: !include cloud.yaml
+cloud:
 elkm1: !include elkm1.yaml
 zwave: !include zwave.yaml
 group: !include_dir_named groups/
