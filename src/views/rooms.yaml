@@ -22,8 +22,10 @@ cards:
         - sensor.ha_version
         - sensor.ha_pypi_version
         - sensor.ha_version_docker
-    - type: weather-forecast
-      entity: weather.kfdk_daynight
-    - type: weather-forecast
-      entity: weather.kfdk_hourly
+    - type: vertical-stack
+      cards:
+        - type: weather-forecast
+          entity: weather.kfdk_daynight
+        - type: weather-forecast
+          entity: weather.kfdk_hourly
     - !rooms
