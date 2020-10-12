@@ -101,6 +101,7 @@ def read_groups():
 
 def process_groups_into_rooms(room_order):
     rooms = {}
+    all_entities = []
     for (name, group) in read_groups().items():
         # Each group in the input is converted to a group in the output.
         dump_yaml(os.path.join(outdir, "groups", f"{name}.yaml"),
@@ -112,6 +113,8 @@ def process_groups_into_rooms(room_order):
             if name not in room_order:
                 raise Exception("room not listed in room_order.yaml: " + name)
             # Create one view per room.
+            entities = group["entities"]
+            all_entities += entities
             dump_yaml(os.path.join(outdir, "views", f"{name}.yaml"),
                       make_room_view(group["name"],
                                      name,
@@ -122,7 +125,21 @@ def process_groups_into_rooms(room_order):
             # And remember which groups are rooms
             rooms[name] = group
 
-    return rooms
+    return (rooms, all_entities)
+
+def create_customize(entities):
+    #
+    # Create a customized.yaml file that gives a friendly name for each entity.
+    #
+
+    customizations = {}
+
+    for entity in entities:
+        if "name" in entity:
+            customizations[entity["entity"]] = dict(
+                friendly_name=entity["name"])
+
+    dump_yaml(os.path.join(outdir, "customize.yaml"), customizations)
 
 def process_file(path):
     with open(os.path.join(indir, path), "r") as inf:
@@ -145,7 +162,7 @@ def main():
         pass
 
     room_order = read_room_order()
-    rooms = process_groups_into_rooms(room_order)
+    (rooms, entities) = process_groups_into_rooms(room_order)
     sorted_rooms = sorted(rooms.items(), key=lambda x: room_order.index(x[0]))
 
     # We also create a "rooms.yaml" group
@@ -169,5 +186,6 @@ def main():
 
     process_file(os.path.join("views", "rooms.yaml"))
     process_file("ui-lovelace.yaml")
+    create_customize(entities)
 
 main()
