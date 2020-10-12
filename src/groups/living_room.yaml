@@ -6,11 +6,11 @@ entities:
     name: Floor Lamp
     tap_action:
       action: toggle
-  - entity: light.table_lamp_couch_deb_side_lr
+  - entity: light.lr_couch_deb_side_bulb
     name: Deb Lamp
     tap_action:
       action: toggle
-  - entity: light.couch_louis_side_lr
+  - entity: light.lr_couch_louis_side_bulb
     name: Louis Lamp
     tap_action:
       action: toggle
