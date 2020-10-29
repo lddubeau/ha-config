@@ -2,8 +2,8 @@ name: Living Room
 type: room
 icon: mdi:sofa
 entities:
-  - entity: light.floor_lamp_couch_deb_side_lr
-    name: Floor Lamp
+  - entity: input_boolean.living_room_is_in_movie_mode
+    name: Movie Mode
     tap_action:
       action: toggle
   - entity: light.lr_couch_deb_side_bulb

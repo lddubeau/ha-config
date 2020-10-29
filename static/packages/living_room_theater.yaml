@@ -1,0 +1,35 @@
+
+
+input_boolean:
+  living_room_is_in_movie_mode:
+    name: "The Living Room is in Movie Mode"
+
+automation:
+  - alias: Living Room Going into Movie Mode
+    trigger:
+      platform: state
+      entity_id: input_boolean.living_room_is_in_movie_mode
+      to: "on"
+    action:
+      - service: scene.create
+        data:
+          scene_id: prior_to_home_movie_mode
+          snapshot_entities:
+            - light.lr_couch_louis_side_bulb
+            - light.lr_couch_deb_side_bulb
+      - service: light.turn_on
+        data:
+          entity_id:
+            - light.lr_couch_louis_side_bulb
+            - light.lr_couch_deb_side_bulb
+          rgb_color: [255, 0, 0]
+          brightness_pct: 70
+  - alias: Living Room Going into Normal Mode
+    trigger:
+      platform: state
+      entity_id: input_boolean.living_room_is_in_movie_mode
+      to: "off"
+    action:
+      - service: scene.turn_on
+        data:
+          entity_id: scene.prior_to_home_movie_mode

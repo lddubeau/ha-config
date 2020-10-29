@@ -1,6 +1,0 @@
-- platform: switch
-  name: "Floor Lamp Couch Deb Side LR"
-  entity_id: switch.floor_lamp_couch_deb_side_lr
-- platform: switch
-  name: "Table Lamp Couch Deb Side LR"
-  entity_id: switch.table_lamp_couch_deb_side_lr

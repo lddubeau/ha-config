@@ -1,0 +1,10 @@
+name: Guest Room
+type: room
+icon: mdi:bed-empty
+entities:
+  - entity: light.guest_room_nightstand_lamp
+    name: Night Stand
+    tap_action:
+      action: toggle
+  - entity: media_player.guest_room_speaker
+    name: Speaker
