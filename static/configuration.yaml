@@ -26,6 +26,9 @@ updater:
   # Optional, allows Home Assistant developers to focus on popular components.
   # include_used_components: true
 
+# Use the app
+mobile_app:
+
 # Discover some devices automatically
 discovery:
 
