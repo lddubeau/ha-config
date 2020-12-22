@@ -18,3 +18,4 @@ P /.git
 P /.gitignore
 P __pycache__
 P webostv.conf
+P blueprints
