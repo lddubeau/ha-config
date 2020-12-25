@@ -9,4 +9,3 @@ rm -rf $BUILD_DIR
 mkdir -p $BUILD_DIR
 # Copy the static files.
 (cd static; tar -cpf - `find . -type f`) | tar -C out -xpf -
-python3 ./tools/process_groups

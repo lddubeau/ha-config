@@ -1,4 +1,0 @@
-name: Travel
-entities:
-  - input_datetime.travel_start
-  - input_datetime.travel_end

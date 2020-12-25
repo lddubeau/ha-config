@@ -1,8 +1,0 @@
-name: Garage
-type: room
-icon: mdi:garage
-entities:
-  - entity: sensor.garage_door
-    name: Door
-  - entity: sensor.garage_side
-    name: Side

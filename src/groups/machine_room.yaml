@@ -1,8 +1,0 @@
-name: Machine Room
-type: room
-icon: mdi:air-conditioner
-entities:
-  - entity: light.machine_room_lights
-    name: Lights
-    tap_action:
-      action: toggle

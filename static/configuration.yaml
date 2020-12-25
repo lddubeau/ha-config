@@ -85,7 +85,6 @@ media_player: !include_dir_list media_players/
 input_datetime: !include_dir_named input_datetimes/
 
 lovelace:
-  mode: yaml
 
 system_health:
 

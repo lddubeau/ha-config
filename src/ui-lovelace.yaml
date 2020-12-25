@@ -1,5 +1,0 @@
-title: Home
-views:
-  !flatten
-    - !room_list
-    - !include views/automation.yaml
