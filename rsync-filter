@@ -4,7 +4,7 @@ P /.cloud
 P /.storage
 P /.uuid
 P /OZW_Log.txt
-P /custom_components
+- /custom_components
 P /deps
 P /home-assistant.log
 P /*.db
@@ -18,4 +18,7 @@ P /.git
 P /.gitignore
 P __pycache__
 P webostv.conf
-P blueprints
+- blueprints
+- themes
+- image
+- www
