@@ -1,0 +1,41 @@
+louis_bedtime:
+  alias: Louis Bedtime
+  sequence:
+    - service: light.turn_on
+      data:
+        entity_id:
+          - light.louis_bedside_lamp
+          - light.deb_bedside_lamp
+    - service: scene.turn_on
+      data:
+        entity_id: scene.task001
+shower_time:
+  alias: Shower Time
+  sequence:
+    - service: light.turn_on
+      data:
+        entity_id:
+          - group.master_bedroom
+          - group.master_bathroom
+show_time:
+  alias: Show Time
+  sequence:
+    - service: light.turn_on
+      data:
+        entity_id:
+          - light.floor_lamp_er
+          - light.louis_end_table_lamp_er
+    - service: media_player.turn_on
+      data:
+        entity_id:
+          - media_player.basement_tv
+show_lamp_view_on_bedroom_display:
+  alias: Show Lamp View on Bedroom Display
+  sequence:
+  - service: cast.show_lovelace_view
+    data:
+      entity_id: media_player.nesthub2834
+      dashboard_path: lovelace-created
+      view_path: master-bedroom-lamps
+  mode: single
+  icon: mdi:lamp

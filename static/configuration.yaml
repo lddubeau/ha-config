@@ -76,7 +76,7 @@ elkm1: !include elkm1.yaml
 zwave: !include zwave.yaml
 group: !include_dir_named groups/
 automation: !include_dir_list automations/
-script: !include_dir_named scripts/
+script: !include scripts.yaml
 light: !include_dir_merge_list lights/
 # scene: !include_dir_merge_list scenes/
 sensor: !include_dir_merge_list sensors/
