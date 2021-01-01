@@ -1,0 +1,11 @@
+alias: Update OpenUV
+description: Update OpenUV every 30 minutes while it is not dark outside. 
+trigger:
+  platform: time_pattern
+  minutes: '/30'
+condition:
+  condition: state
+  entity_id: binary_sensor.dark_outside
+  state: "off"
+action:
+  service: openuv.update_uv_index_data
