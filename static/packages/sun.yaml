@@ -1,0 +1,15 @@
+sensor:
+  - platform: template
+    sensors:
+      next_rising:
+        friendly_name: 'Next Rising of the Sun'
+        value_template: >-
+          {{ as_timestamp(states.sun.sun.attributes.next_rising) | 
+             timestamp_custom(' %I:%M %p') | replace(" 0", "") }}
+        icon_template: mdi:weather-sunset-up
+      next_setting:
+        friendly_name: 'Next Setting of the Sun'
+        value_template: >-
+          {{ as_timestamp(states.sun.sun.attributes.next_setting) |
+             timestamp_custom(' %I:%M %p') | replace(" 0", "") }}
+        icon_template: mdi:weather-sunset-down
