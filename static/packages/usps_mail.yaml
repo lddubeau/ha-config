@@ -8,16 +8,17 @@ notify:
 
 automation:
   - alias: "Reset USPS Mail"
+    mode: single
     trigger:
       platform: time
       at: "00:00:01"
     action:
-      - service: mqtt.publish
+      - service: python.set_state
         data:
-          topic: ha/sensor/usps/mail_delivered/state
-          payload: "unknown"
-          retain: true
+          entity_id: sensor.usps_mail_delivered
+          state: "unknown"
   - alias: "USPS Mail Delivered"
+    mode: queued
     trigger:
       platform: state
       entity_id: sensor.usps_mail_delivered
@@ -26,3 +27,93 @@ automation:
       - service: notify.usps_mail_notify_group
         data:
           message: "USPS mail has been delivered."
+  - alias: "Generate USPS Package"
+    mode: queued
+    trigger:
+      - platform: state
+        entity_id: sensor.usps_email_notifications
+      - platform: homeassistant
+        event: start
+    variables:
+      subject: >-
+        {% set subject =
+           state_attr('sensor.usps_email_notifications', 'subject') %}
+        {{ "unknown" if subject is none else subject }}
+      tracking: >-
+       {{ "unknown" if subject | length < 22 else
+          subject | regex_findall_index("([0-9]{22})") }}
+      name: "sensor.package_USPS_{{ tracking }}"
+    condition:
+      condition: not
+      conditions:
+        - condition: state
+          entity_id: sensor.usps_email_notifications
+          state: unknown
+    action:
+      - service: python_script.set_state
+        data:
+          entity_id: "{{ name }}"
+          state: "{{ tracking }}"
+          attributes:
+            unit_of_measurement: package
+            provider: USPS
+            tracking_number: "{{ tracking }}"
+            subject: "{{ subject }}"
+            status: >-
+              {% set value = (subject |
+                regex_findall_index("USPS(\(R\)|®)? (Item Delivered|Expected Delivery|Delivery Exception|Out for Delivery)"))[1]
+                if not is_state("sensor.usps_email_notifications", "unknown")
+                else "unknown" %}
+              {{ "Delivered" if value == "Item Delivered" else "Unknown"
+                 if value == "unknown" else "Transit" }}
+
+sensor:
+  - platform: imap_email_content
+    server: imap.gmail.com
+    port: 993
+    username: !secret homeassistant_email_user
+    password: !secret homeassistant_email_password
+    name: usps_email_notifications
+    senders:
+      - auto-reply@usps.com
+      - ldd@lddubeau.com
+  - platform: template
+    sensors:
+      usps_mail_delivered:
+        friendly_name: USPS Mail Delivered
+        value_template: >-
+          {% set delivered = "USPS" in (states.sensor.packages_delivered.attributes |
+                                        map(attribute="provider")) %}
+          {% set not_delivered =
+                "USPS" in (states.sensor.packages_in_transit.attributes |
+                           map(attribute="provider")) %}
+          {{ "yes" if delivered else
+             "no" if not_delivered else "unknown" }}
+      packages_in_transit:
+        friendly_name: Packages In Transit
+        value_template: >-
+          {{ (state_attr('sensor.packages_in_transit', 'packages') or []) |
+              length }}
+        attribute_templates:
+          packages: >-
+            {% set l = namespace(found=[]) %}
+            {% for key in states.sensor|map(attribute="entity_id")|list
+               if key | regex_match("sensor.package_") and
+                  state_attr(key, "status") == "Transit" %}
+              {% set l.found = l.found + [dict(states[key].attributes)] %}
+            {% endfor %}
+            {{ l.found }}
+      pacakges_delivered:
+        friendly_name: Packages Delivered
+        value_template: >-
+          {{ (state_attr('sensor.packages_delivered', 'packages') or []) |
+              length }}
+        attribute_templates:
+          packages: >-
+            {% set l = namespace(found=[]) %}
+            {% for key in states.sensor|map(attribute="entity_id")|list
+               if key | regex_match("sensor.package_") and
+                  state_attr(key, "status") == "Delivered" %}
+              {% set l.found = l.found + [dict(states[key].attributes)] %}
+            {% endfor %}
+            {{ l.found }}
