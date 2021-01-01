@@ -1,10 +1,4 @@
 homeassistant:
-  name: Home
-  latitude: 39.386434
-  longitude: -77.347360
-  elevation: 440
-  unit_system: imperial
-  time_zone: America/New_York
   customize: !include customize.yaml
   packages: !include_dir_named packages/
 
