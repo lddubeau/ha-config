@@ -1,27 +1,9 @@
 webostv:
-  host: 192.168.10.4
+  host: 192.168.11.146
   name: Living Room TV
   turn_on_action:
     service: wake_on_lan.send_magic_packet
     data:
       mac: "4C-1B-86-4A-E7-82"
       # This is the router of the IOT network (avici).
-      broadcast_address: "192.168.0.100"
-
-# media_player:
-#   - platform: webostv
-#     host: 192.168.10.102
-#     name: Living Room TV
-#     filename: webostv-living-room.conf
-#     turn_on_action:
-#       service: wake_on_lan.send_magic_packet
-#       data:
-#         mac: "4C-1B-86-4A-E7-82"
-#         # This is the router of the IOT network (avici).
-#         broadcast_address: "192.168.0.100"
-
-# notify:
-#   - platform: webostv
-#     host: 192.168.10.102
-#     name: Living Room TV
-#     filename: webostv-living-room.conf
+      broadcast_address: "192.168.0.101"
