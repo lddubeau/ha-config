@@ -12,11 +12,19 @@ automation:
     trigger:
       platform: time
       at: "00:00:01"
+    variables:
+      usps: >-
+        {{ states.sensor.packages_delivered.attributes.packages |
+           selectattr("provider", "eq", "USPS") | list }}
+      length: "usps | length"
     action:
-      - service: python.set_state
-        data:
-          entity_id: sensor.usps_mail_delivered
-          state: "unknown"
+      repeat:
+        while: "{{ repeat.index < length }}"
+        sequence:
+          - service: python.set_state
+            data:
+              entity_id: states.sensor.package_USPS_{{ usps[repeat.index].tracking_number[1:] }}
+              state: 
   - alias: "USPS Mail Delivered"
     mode: queued
     trigger:
@@ -57,15 +65,26 @@ automation:
           attributes:
             unit_of_measurement: package
             provider: USPS
-            tracking_number: "{{ tracking }}"
+            tracking_number: "{{ 'T%d' % (tracking) }}"
             subject: "{{ subject }}"
             status: >-
               {% set value = (subject |
-                regex_findall_index("USPS(\(R\)|®)? (Item Delivered|Expected Delivery|Delivery Exception|Out for Delivery)"))[1]
-                if not is_state("sensor.usps_email_notifications", "unknown")
+                 regex_findall_index("USPS(\(R\)|®)? (Item Delivered|Expected Delivery|Delivery Exception|Out for Delivery)"))[1]
+                 if not is_state("sensor.usps_email_notifications", "unknown")
                 else "unknown" %}
-              {{ "Delivered" if value == "Item Delivered" else "Unknown"
-                 if value == "unknown" else "Transit" }}
+              {% set right_now = now() %}
+              {% set date_match = (value == "Expected Delivery") and
+                 (subject | regex_findall_index(
+                   "USPS(?:\(R\)|®) Expected Delivery(?: by | on | )?(?:.*?)"
+                   " (.*?) (.*?), (\d+)")) ==
+                   (right_now.strftime("%B"), "%d" % right_now.day,
+                   "%d" % right_now.year) %}
+              {{ "Delivered" if value == "Item Delivered"
+                 else "Unknown" if value == "unknown"
+                 else "Out for Delivery" if (value == "Out for Delivery") or
+                                            (value == "Expected Delivery" and
+                                             date_match)
+                 else "Transit" }}
 
 sensor:
   - platform: imap_email_content
@@ -82,11 +101,12 @@ sensor:
       usps_mail_delivered:
         friendly_name: USPS Mail Delivered
         value_template: >-
-          {% set delivered = "USPS" in (states.sensor.packages_delivered.attributes |
-                                        map(attribute="provider")) %}
-          {% set not_delivered =
-                "USPS" in (states.sensor.packages_in_transit.attributes |
-                           map(attribute="provider")) %}
+          {% set delivered = "USPS" in
+             (states.sensor.packages_delivered.attributes.packages
+              | map(attribute="provider")) %}
+          {% set not_delivered = "USPS" in
+             (states.sensor.packages_out_for_delivery.attributes.packages
+              | map(attribute="provider")) %}
           {{ "yes" if delivered else
              "no" if not_delivered else "unknown" }}
       packages_in_transit:
@@ -103,7 +123,21 @@ sensor:
               {% set l.found = l.found + [dict(states[key].attributes)] %}
             {% endfor %}
             {{ l.found }}
-      pacakges_delivered:
+      packages_out_for_delivery:
+        friendly_name: Packages Out for Delivery
+        value_template: >-
+          {{ (state_attr('sensor.packages_out_for_delivery', 'packages') or []) |
+              length }}
+        attribute_templates:
+          packages: >-
+            {% set l = namespace(found=[]) %}
+            {% for key in states.sensor|map(attribute="entity_id")|list
+               if key | regex_match("sensor.package_") and
+                  state_attr(key, "status") == "Out for Delivery" %}
+              {% set l.found = l.found + [dict(states[key].attributes)] %}
+            {% endfor %}
+            {{ l.found }}
+      packages_delivered:
         friendly_name: Packages Delivered
         value_template: >-
           {{ (state_attr('sensor.packages_delivered', 'packages') or []) |
