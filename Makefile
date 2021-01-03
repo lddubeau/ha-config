@@ -1,5 +1,5 @@
-LIVE_HOST=ha@ha
-LIVE_ROOT_HOST=ldd@ha
+LIVE_HOST=ha@ha.lddubeau.com
+LIVE_ROOT_HOST=ldd@ha.lddubeau.com
 LIVE_HOME=/home/ha/src/ha-docker/
 LIVE_CONFIG=$(LIVE_HOME)ha-config/
 
