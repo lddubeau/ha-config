@@ -16,7 +16,7 @@ check-sync: RSYNC_EXTRA_OPTS=--dry-run
 check-sync:
 	$(RSYNC_CMD)
 
-sync:
+sync: default
 	$(RSYNC_CMD)
 
 backup:
