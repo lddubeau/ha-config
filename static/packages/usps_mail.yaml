@@ -58,10 +58,15 @@ automation:
       platform: state
       entity_id: sensor.usps_mail_delivered
       to: "yes"
+    variables:
+      message: "USPS mail has been delivered."
     action:
       - service: notify.usps_mail_notify_group
         data:
-          message: "USPS mail has been delivered."
+          message: "{{ message }}"
+      - service: persistent_notification.create
+        data:
+          message: "{{ message }}"
   - alias: "Generate USPS Package"
     mode: queued
     trigger:
