@@ -6,6 +6,34 @@ notify:
       - service: basement_tv
       - service: google_home
 
+script:
+  delete_usps_sensor_package:
+    alias: "Delete a USPS Sensor Package."
+    fields:
+      tracking:
+        description: The tracking number.
+    variables:
+      mqtt_topic: "package_USPS_{{ tracking }}" 
+      state_topic: "packages/sensor/state/{{ mqtt_topic }}"
+      attribute_topic: "packages/sensor/attributes/{{ mqtt_topic }}"
+      config_topic: "ha/sensor/{{ mqtt_topic }}/config"
+    sequence:
+      - service: mqtt.publish
+        data_template:
+          topic: "{{ state_topic }}"
+          retain: true
+          payload: null
+      - service: mqtt.publish
+        data_template:
+          topic: "{{ attribute_topic }}"
+          retain: true
+          payload: null
+      - service: mqtt.publish
+        data_template:
+          topic: "{{ config_topic }}"
+          retain: true
+          payload: null
+          
 automation:
   - alias: "Reset USPS Mail"
     mode: single
@@ -16,15 +44,14 @@ automation:
       usps: >-
         {{ states.sensor.packages_delivered.attributes.packages |
            selectattr("provider", "eq", "USPS") | list }}
-      length: "usps | length"
+      length: "{{ usps | length }}"
     action:
-      repeat:
-        while: "{{ repeat.index < length }}"
-        sequence:
-          - service: python.set_state
-            data:
-              entity_id: states.sensor.package_USPS_{{ usps[repeat.index].tracking_number[1:] }}
-              state: 
+      - repeat:
+          while: "{{ repeat.index < length }}"
+          sequence:
+            - service: script.delete_usps_sensor_package
+              data_template:
+                tracking: "{{ states.sensor[repeat.index] }}"
   - alias: "USPS Mail Delivered"
     mode: queued
     trigger:
@@ -48,43 +75,58 @@ automation:
            state_attr('sensor.usps_email_notifications', 'subject') %}
         {{ "unknown" if subject is none else subject }}
       tracking: >-
-       {{ "unknown" if subject | length < 22 else
-          subject | regex_findall_index("([0-9]{22})") }}
-      name: "sensor.package_USPS_{{ tracking }}"
-    condition:
-      condition: not
-      conditions:
-        - condition: state
-          entity_id: sensor.usps_email_notifications
-          state: unknown
+        {% set tr = subject | regex_findall_index("([0-9]{22})") %}
+        {{ "unknown" if tr is none else tr }}
+      name: "Package USPS {{ tracking }}"
+      mqtt_topic: "package_USPS_{{ tracking }}" 
+      state_topic: "packages/sensor/state/{{ mqtt_topic }}"
+      attribute_topic: "packages/sensor/attributes/{{ mqtt_topic }}"
+      config_topic: "ha/sensor/{{ mqtt_topic }}/config"
+    condition: >-
+      {{ not is_state('sensor.usps_email_notifications', 'unknown') }}
     action:
-      - service: python_script.set_state
-        data:
-          entity_id: "{{ name }}"
-          state: "{{ tracking }}"
-          attributes:
-            unit_of_measurement: package
-            provider: USPS
-            tracking_number: "{{ 'T%d' % (tracking) }}"
-            subject: "{{ subject }}"
-            status: >-
-              {% set value = (subject |
-                 regex_findall_index("USPS(\(R\)|®)? (Item Delivered|Expected Delivery|Delivery Exception|Out for Delivery)"))[1]
-                 if not is_state("sensor.usps_email_notifications", "unknown")
-                else "unknown" %}
-              {% set right_now = now() %}
-              {% set date_match = (value == "Expected Delivery") and
-                 (subject | regex_findall_index(
-                   "USPS(?:\(R\)|®) Expected Delivery(?: by | on | )?(?:.*?)"
-                   " (.*?) (.*?), (\d+)")) ==
-                   (right_now.strftime("%B"), "%d" % right_now.day,
-                   "%d" % right_now.year) %}
-              {{ "Delivered" if value == "Item Delivered"
-                 else "Unknown" if value == "unknown"
-                 else "Out for Delivery" if (value == "Out for Delivery") or
-                                            (value == "Expected Delivery" and
-                                             date_match)
-                 else "Transit" }}
+      - service: mqtt.publish
+        data_template:
+          topic: "{{ config_topic }}"
+          retain: true
+          payload: >-
+            {{ {
+              "name": name,
+              "state_topic": state_topic,
+              "json_attributes_topic": attribute_topic,
+              "unit_of_measurement": "package",
+            } | to_json }}
+      - service: mqtt.publish
+        data_template:
+          topic: "{{ state_topic }}"
+          retain: true
+          payload: "{{ tracking }}"
+      - service: mqtt.publish
+        data_template:
+          topic: "{{ attribute_topic }}"
+          retain: true
+          payload: >-
+            {% set value = (subject |
+               regex_findall_index("USPS(\(R\)|®)? (Item Delivered|Expected Delivery|Delivery Exception|Out for Delivery)"))[1]
+               if not is_state("sensor.usps_email_notifications", "unknown")
+               else "unknown" %}
+            {% set right_now = now() %}
+            {% set date_match = (value == "Expected Delivery") and
+               (subject | regex_findall_index(
+               "USPS(?:\(R\)|®) Expected Delivery(?: by | on | )?(?:.*?)"
+               " (.*?) (.*?), (\d+)")) ==
+              (right_now.strftime("%B"), "%d" % right_now.day, "%d" % right_now.year) %}
+            {{ {
+              "unit_of_measurement": "package",
+              "provider": "USPS",
+              "tracking_number": 'T%d' % (tracking),
+              "subject": subject, 
+              "status": "Delivered" if value == "Item Delivered"
+                        else "Unknown" if value == "unknown"
+                        else "Out for Delivery" if (value == "Out for Delivery") or
+                                                   (value == "Expected Delivery" and date_match)
+                        else "Transit",
+              } | to_json }}
 
 sensor:
   - platform: imap_email_content
