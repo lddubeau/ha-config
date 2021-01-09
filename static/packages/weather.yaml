@@ -1,10 +1,13 @@
 notify:
-  - name: temperature_notify_group
+  - name: sink_temperature_notify_group
     platform: group
     services:
       - service: living_room_tv
       - service: basement_tv
       - service: google_home
+      - service: mobile_app_chromebook
+      - service: mobile_app_pixel_4a
+      - service: mobile_app_pixel_3
 
 sensor:
   - platform: template
@@ -42,7 +45,7 @@ script:
       message: "Turn on the guest bathroom sink faucet."
       action: guest_bathroom_sink_faucet_turned_on
     sequence:
-      - service: notify.mobile_app_chromebook
+      - service: notify.sink_temperature_notify_group
         data:
           message: "{{ message }}"
           data:
@@ -51,23 +54,12 @@ script:
             actions:
               - action: "{{ action }}"
                 title: Done
-      - service: notify.mobile_app_pixel_4a
-        data:
-          message: "{{ message }}"
-          data:
-            ttl: 0
-            priority: high
-            actions:
-              - action: "{{ action }}"
-                title: Done
-      - service: notify.temperature_notify_group
-        data:
-          message: "{{ message }}"
       - service: persistent_notification.create
         data:
           message: "{{ message }}"
           notification_id: guest_bathroom_sink_faucet
   notify_sink_faucet_can_be_turned_off:
+    alias: Notify That the Guest Bathroom Sink Can be Turned Off
     variables:
       message: "Turn off the guest bathroom sink faucet."
       action: guest_bathroom_sink_faucet_turned_off
@@ -90,7 +82,7 @@ script:
             actions:
               - action: "{{ action }}"
                 title: Done
-      - service: notify.temperature_notify_group
+      - service: notify.sink_temperature_notify_group
         data:
           message: "{{ message }}"
       - service: persistent_notification.create
