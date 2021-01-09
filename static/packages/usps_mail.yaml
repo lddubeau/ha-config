@@ -19,20 +19,23 @@ script:
       config_topic: "ha/sensor/{{ mqtt_topic }}/config"
     sequence:
       - service: mqtt.publish
+        data:
+          retain: true
+          payload: ""
         data_template:
           topic: "{{ state_topic }}"
-          retain: true
-          payload: null
       - service: mqtt.publish
+        data:
+          retain: true
+          payload: ""
         data_template:
           topic: "{{ attribute_topic }}"
-          retain: true
-          payload: null
       - service: mqtt.publish
+        data:
+          retain: true
+          payload: ""
         data_template:
           topic: "{{ config_topic }}"
-          retain: true
-          payload: null
           
 automation:
   - alias: "Reset USPS Mail"
@@ -43,15 +46,19 @@ automation:
     variables:
       usps: >-
         {{ states.sensor.packages_delivered.attributes.packages |
-           selectattr("provider", "eq", "USPS") | list }}
+           selectattr("provider", "eq", "USPS") |
+           map(attribute="tracking_number") |
+           map("regex_replace", "^T", "") | list }}
       length: "{{ usps | length }}"
     action:
       - repeat:
-          while: "{{ repeat.index < length }}"
+          while: "{{ repeat.index <= length }}"
           sequence:
             - service: script.delete_usps_sensor_package
               data_template:
-                tracking: "{{ states.sensor[repeat.index] }}"
+                tracking: >-
+                  {{ states.sensor["package_USPS_" +
+                     usps[repeat.index - 1]].state }}
   - alias: "USPS Mail Delivered"
     mode: queued
     trigger:
