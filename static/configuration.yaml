@@ -92,3 +92,6 @@ mqtt:
   password: !secret mosquitto_password
   discovery: true
   discovery_prefix: ha
+
+person:
+  
