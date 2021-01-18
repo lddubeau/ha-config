@@ -5,7 +5,6 @@ notify:
       - service: mobile_app_chromebook
       - service: mobile_app_pixel_4a
       - service: mobile_app_pixel_3
-      - service: google_home
 
 script:
   delete_usps_sensor_package:
