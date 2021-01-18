@@ -1,0 +1,7 @@
+name: All Persons
+entities:
+  - person.louis
+  - person.deb
+# This makes it so that the group is "away" only if everybody
+# is "away".
+all: false

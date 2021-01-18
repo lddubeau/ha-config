@@ -3,5 +3,8 @@
     away:
       # A sensor determining whether everybody is out of the house.
       friendly_name: Away
+      # We want the template to be true if the alarm system is armed
+      # away or if everybody is away.
       value_template: >-
-        {{ is_state('alarm_control_panel.area001', 'armed_away') }}
+        {{ is_state('alarm_control_panel.area001', 'armed_away') or
+           not is_state('group.all_persons', 'home') }}
