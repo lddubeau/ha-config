@@ -37,6 +37,10 @@ binary_sensor:
 input_boolean:
   guest_bathroom_sink_faucet:
     name: "The Sink Faucet in the Guest Bathroom"
+  sink_warning_delivered:
+    name: "Warned the User about the Sink Today"
+  sink_warning_silenced:
+    name: "Silenced the Sink Warning"
 
 script:
   notify_sink_faucet_can_be_turned_on:
@@ -44,6 +48,7 @@ script:
     variables:
       message: "Turn on the guest bathroom sink faucet."
       action: guest_bathroom_sink_faucet_turned_on
+      silence_action: silence_sink_warning
     sequence:
       - service: notify.sink_temperature_notify_group
         data:
@@ -54,41 +59,38 @@ script:
             actions:
               - action: "{{ action }}"
                 title: Done
+              - action: "{{ silence_action }}"
+                title: Silence
       - service: persistent_notification.create
         data:
           message: "{{ message }}"
           notification_id: guest_bathroom_sink_faucet
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.sink_warning_delivered  
   notify_sink_faucet_can_be_turned_off:
     alias: Notify That the Guest Bathroom Sink Can be Turned Off
     variables:
       message: "Turn off the guest bathroom sink faucet."
       action: guest_bathroom_sink_faucet_turned_off
+      silence_action: silence_sink_warning
     sequence:
-      - service: notify.mobile_app_chromebook
-        data:
-          message: "{{ message }}"
-          data:
-            ttl: 0
-            priority: high
-            actions:
-              - action: "{{ action }}"
-                title: Done
-      - service: notify.mobile_app_pixel_4a
-        data:
-          message: "{{ message }}"
-          data:
-            ttl: 0
-            priority: high
-            actions:
-              - action: "{{ action }}"
-                title: Done
       - service: notify.sink_temperature_notify_group
         data:
           message: "{{ message }}"
+          data:
+            ttl: 0
+            priority: high
+            actions:
+              - action: "{{ action }}"
+                title: Done
+              - action: "{{ silence_action }}"
+                title: Silence
       - service: persistent_notification.create
         data:
           message: "{{ message }}"
           notification_id: guest_bathroom_sink_faucet
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.sink_warning_delivered  
     
 automation:
   - alias: The Temperature is too Low
@@ -96,17 +98,24 @@ automation:
       - platform: state
         entity_id: binary_sensor.temperature_too_low
         to: "on"
+      - platform: state
+        entity_id: input_boolean.sink_warning_delivered
+        to: "off"
       - platform: time_pattern
         hours: /1
     # Test that the trigger is a state trigger. This way the warning comes right away
     # and between 17 and 22 on the hour.
     condition: >-
       {% set hour = as_local(now()).hour %}
-      {{ (trigger.platform == "state") or
-         (is_state('input_boolean.guest_bathroom_sink_faucet', 'off') and
-          is_state('binary_sensor.temperature_too_low', 'on') and
-          (hour > 16) and
-          (hour < 23)) }}
+      {{ not is_state('input_boolean.sink_warning_silenced', 'on') and
+         (((trigger.platform == "state") and
+           not is_state('input_boolean.sink_warning_delivered',
+                        'on')) or
+          (is_state('input_boolean.guest_bathroom_sink_faucet',
+                    'off') and
+           is_state('binary_sensor.temperature_too_low', 'on') and
+           (hour > 16) and
+           (hour < 23))) }}
     action:
       - service: script.notify_sink_faucet_can_be_turned_on
   - alias: Can Turn Off the Sink
@@ -114,14 +123,19 @@ automation:
       - platform: state
         entity_id: input_boolean.guest_bathroom_sink_faucet
         to: "on"
+      - platform: state
+        entity_id: input_boolean.sink_warning_delivered
+        to: "off"
       - platform: time_pattern
         hours: /1
     # We want the warning to only come betwen 9 and 12, inclusively.
     condition: >-
       {% set hour = as_local(now()).hour %}
-      {{ is_state('input_boolean.guest_bathroom_sink_faucet', 'on') and
-         (hour > 8) and
-         (hour < 13) }}
+      {{ not is_state('input_boolean.sink_warning_silenced', 'on') and
+         (is_state('input_boolean.guest_bathroom_sink_faucet',
+                   'on') and
+          (hour > 8) and
+          (hour < 13)) }}
     action:
       - service: script.notify_sink_faucet_can_be_turned_off
   - alias: "Turned On Has Been Fired"
@@ -142,5 +156,30 @@ automation:
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.guest_bathroom_sink_faucet
+  - alias: "Silence Has Been Fired"
+    trigger:
+      platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: silence_sink_warning
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.sink_warning_silenced
+  - alias: "Reset sink_warning_silenced"
+    mode: single
+    tigger:
+      platform: time
+      at: "00:00:01"
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.sink_warning_silenced
+  - alias: "Reset sink_warning_delivered"
+    mode: single
+    tigger:
+      platform: time
+      at: "00:09:00"
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.sink_warning_delivered  
 
           
