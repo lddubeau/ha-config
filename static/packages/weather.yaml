@@ -32,7 +32,8 @@ binary_sensor:
         friendly_name: The Temperature is Too Low
         device_class: safety
         value_template: >-
-          {{ states("sensor.weather_daily_forecast_temperature_low") | float <= 25 }}
+          {{ states("sensor.weather_daily_forecast_temperature_low") |
+             float <= 23 }}
 
 input_boolean:
   guest_bathroom_sink_faucet:
