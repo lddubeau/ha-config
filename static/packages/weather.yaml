@@ -28,12 +28,12 @@ sensor:
 binary_sensor:
   platform: template
   sensors:
-      temperature_too_low:
-        friendly_name: The Temperature is Too Low
-        device_class: safety
-        value_template: >-
-          {{ states("sensor.weather_daily_forecast_temperature_low") |
-             float <= 23 }}
+    temperature_too_low:
+      friendly_name: The Temperature is Too Low
+      device_class: safety
+      value_template: >-
+        {{ states("sensor.weather_daily_forecast_temperature_low") |
+           float <= 23 }}
 
 input_boolean:
   guest_bathroom_sink_faucet:
@@ -168,7 +168,7 @@ automation:
         entity_id: input_boolean.sink_warning_silenced
   - alias: "Reset sink_warning_silenced"
     mode: single
-    tigger:
+    trigger:
       platform: time
       at: "00:00:01"
     action:
@@ -176,7 +176,7 @@ automation:
         entity_id: input_boolean.sink_warning_silenced
   - alias: "Reset sink_warning_delivered"
     mode: single
-    tigger:
+    trigger:
       platform: time
       at: "00:09:00"
     action:
