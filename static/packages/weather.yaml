@@ -108,13 +108,13 @@ automation:
     # and between 17 and 22 on the hour.
     condition: >-
       {% set hour = as_local(now()).hour %}
-      {{ not is_state('input_boolean.sink_warning_silenced', 'on') and
+      {{ (not is_state('input_boolean.sink_warning_silenced', 'on') and
+          is_state('binary_sensor.temperature_too_low', 'on')) and
          (((trigger.platform == "state") and
            not is_state('input_boolean.sink_warning_delivered',
                         'on')) or
           (is_state('input_boolean.guest_bathroom_sink_faucet',
                     'off') and
-           is_state('binary_sensor.temperature_too_low', 'on') and
            (hour > 16) and
            (hour < 23))) }}
     action:
