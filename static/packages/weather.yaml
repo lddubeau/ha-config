@@ -104,13 +104,23 @@ automation:
         to: "off"
       - platform: time_pattern
         hours: /1
-    # Test that the trigger is a state trigger. This way the warning comes right away
-    # and between 17 and 22 on the hour.
+      - platform: time
+        at: "00:08:00"
+    # True if:
+    #  - the warning hasn't be silenced and
+    #  - the sensor says the temperature is too low and,
+    #  - hour greater or equal to 8 and,
+    #      - the trigger platform is state or time and
+    #      - the message has not be delivered,
+    #    - or
+    #      - the sink faucet is off,
+    #      - the time is between 16 and 23.
     condition: >-
       {% set hour = as_local(now()).hour %}
       {{ (not is_state('input_boolean.sink_warning_silenced', 'on') and
-          is_state('binary_sensor.temperature_too_low', 'on')) and
-         (((trigger.platform == "state") and
+          is_state('binary_sensor.temperature_too_low', 'on') and
+          (hour >= 8)) and 
+         (((trigger.platform in ("state", "time")) and
            not is_state('input_boolean.sink_warning_delivered',
                         'on')) or
           (is_state('input_boolean.guest_bathroom_sink_faucet',
