@@ -54,6 +54,7 @@ script:
         data:
           message: "{{ message }}"
           data:
+            tag: sink_temperature_notify_group
             ttl: 0
             priority: high
             actions:
@@ -78,6 +79,7 @@ script:
         data:
           message: "{{ message }}"
           data:
+            tag: sink_temperature_notify_group
             ttl: 0
             priority: high
             actions:
@@ -90,7 +92,15 @@ script:
           message: "{{ message }}"
           notification_id: guest_bathroom_sink_faucet
       - service: input_boolean.turn_on
-        entity_id: input_boolean.sink_warning_delivered  
+        entity_id: input_boolean.sink_warning_delivered
+  dismiss_sink_notifications:
+    alias: Dismmiss the notifications about the sink
+    sequence:
+      - service: notify.mobile_app_<your_device_id_here>
+        data:
+          message: clear_notification
+          data:
+            tag: sink_temperature_notify_group
     
 automation:
   - alias: The Temperature is too Low
@@ -148,24 +158,23 @@ automation:
           (hour < 13)) }}
     action:
       - service: script.notify_sink_faucet_can_be_turned_off
-  - alias: "Turned On Has Been Fired"
+  - alias: "Turned On/Off Has Been Fired"
     trigger:
-      platform: event
-      event_type: mobile_app_notification_action
-      event_data:
-        action: guest_bathroom_sink_faucet_turned_on
+      - platform: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: guest_bathroom_sink_faucet_turned_on
+      - platform: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: guest_bathroom_sink_faucet_turned_off
     action:
-      - service: input_boolean.turn_on
+      - service: >-
+          input_boolean.turn_{{ "on" if
+             trigger.event.data = "guest_bathroom_sink_faucet_turned_on" else
+             "off" }}
         entity_id: input_boolean.guest_bathroom_sink_faucet
-  - alias: "Turned Off Has Been Fired"
-    trigger:
-      platform: event
-      event_type: mobile_app_notification_action
-      event_data:
-        action: guest_bathroom_sink_faucet_turned_off
-    action:
-      - service: input_boolean.turn_off
-        entity_id: input_boolean.guest_bathroom_sink_faucet
+      - service: script.dismiss_sink_notifications
   - alias: "Silence Has Been Fired"
     trigger:
       platform: event
@@ -175,6 +184,7 @@ automation:
     action:
       - service: input_boolean.turn_on
         entity_id: input_boolean.sink_warning_silenced
+      - service: script.dismiss_sink_notifications
   - alias: "Reset sink_warning_silenced"
     mode: single
     trigger:
@@ -183,6 +193,7 @@ automation:
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.sink_warning_silenced
+      - service: script.dismiss_sink_notifications
   - alias: "Reset sink_warning_delivered"
     mode: single
     trigger:
