@@ -4,7 +4,6 @@ notify:
     services:
       - service: living_room_tv
       - service: basement_tv
-      - service: google_home
       - service: mobile_app_chromebook
       - service: mobile_app_pixel_4a
       - service: mobile_app_pixel_3
