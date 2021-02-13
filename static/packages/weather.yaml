@@ -171,7 +171,7 @@ automation:
     action:
       - service: >-
           input_boolean.turn_{{ "on" if
-             trigger.event.data == "guest_bathroom_sink_faucet_turned_on" else
+             trigger.event.data.action == "guest_bathroom_sink_faucet_turned_on" else
              "off" }}
         entity_id: input_boolean.guest_bathroom_sink_faucet
       - service: script.dismiss_sink_notifications
